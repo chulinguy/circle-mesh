@@ -19,7 +19,7 @@ class Routes extends React.Component {
       currentMeshName: '',
       action: '',
       needToRedirect: false,
-      tempUser: null
+      tempID: 0
     }
     this.updateLogin = this.updateLogin.bind(this);
     this.updateUser = this.updateUser.bind(this);
@@ -37,7 +37,7 @@ class Routes extends React.Component {
     that.setState({
       serverResponded: true,
       userLogged: logincheck.data.logged,
-      tempUser: logincheck.data.tempUser
+      tempID: logincheck.data.tempID
     })
     console.log('updated routesR\'s login states')
   }
@@ -76,8 +76,8 @@ class Routes extends React.Component {
               serverResponded = {this.state.serverResponded}
               meshes={this.state.meshes}
               action={this.state.action}
+              tempID={this.state.tempID}
               history={this.props.history}
-              tempUser={this.state.tempUser}
             />
             
           )}/>

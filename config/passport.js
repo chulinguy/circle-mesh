@@ -35,9 +35,9 @@ var passport = function(passport) {
           scope: ['r_emailaddress', 'r_basicprofile'],
     },
 	  function(accessToken, refreshToken, profile, done) {
-      console.log("access", accessToken)
-      console.log("refresh", refreshToken)
-      console.log("profile", profile)
+      // console.log("access", accessToken)
+      // console.log("refresh", refreshToken)
+      console.log("profile is", profile)
       process.nextTick(function(){
         console.log('trying to find user')
         // console.log(`profile displayname is ${profile.displayName}`)
@@ -62,7 +62,7 @@ var passport = function(passport) {
                 console.log(err)
               } else {
                 console.log('done creating a new user')
-                console.log(data);
+                // console.log(data);
                 return done(null, data)
               };
             })  

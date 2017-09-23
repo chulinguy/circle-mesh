@@ -18,7 +18,7 @@ var port = process.env.PORT || 3000;
 app.use(express.static("public"));
 app.use(logger("dev"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
@@ -57,8 +57,13 @@ var action ='';
 //Linkedin passport
 app.get('/auth/linkedin/create/:tempID', function(req, res, next){
   console.log('CHANGING NEED TO REDIRECT');
-  tempUsersArr[tempID].needToRedirect = true;
-  tempUsersArr[tempID].action = "create";
+  console.log(req.params)
+  // console.log(req.query)
+  console.log('I am a string?', req.params.tempID)
+  var parsedTempID = parseInt(req.params.tempID);
+  console.log('I am a number?', parsedTempID)
+  tempUsersArr[parsedTempID].needToRedirect = true;
+  tempUsersArr[parsedTempID].action = "create";
   next();
 },
   passport.authenticate('linkedin')
@@ -73,17 +78,43 @@ app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
 }));
 
 //for this user, get whole user obj
-app.get('/api/user',(req, res) => {
+app.get('/api/user/:tempID',(req, res) => {
   var userToFind = '';  
   console.log('req session is')
   console.log(req.session)
   if (req.session.passport) userToFind =  req.session.passport.user;
   User.findById(userToFind, (err, foundUser) => {
     // console.log('foundUser', foundUser);
-    // if (!foundUser) foundUser = {};
-    res.json(foundUser)
+    var userObj = {};
+    userObj.user = foundUser
+    userObj.needToRedirect = tempUsersArr[req.params.tempID].needToRedirect
+    res.json(userObj)
   })
 
+})
+
+var tempUsersArr = [];  
+for (var i = 1; i< 101; i++){
+  tempUsersArr[i]={
+    tempID: i,
+    needToRedirect: false,
+    action: ''
+  }
+}
+
+var tempCounter = 1;  
+//route for server to respond if user is logged in
+app.get("/api/loggedin", (req, res) => {
+  console.log('is user logged in?')
+  console.log(`--------logged in answer is ${isLoggedIn(req, res)}--------`)
+  var redirectCheck = false;
+  if (isLoggedIn(req, res)) {
+    // redirectCheck = tempUsersArr[].needToRedirect ;
+  } else tempCounter ++;  
+  res.json({
+    logged: isLoggedIn(req,res),
+    tempID: tempCounter
+  })
 })
 
 //route for user to create a mesh
@@ -145,30 +176,7 @@ app.post('/api/mesh/:meshname', (req, res) => {
 //     }
 //   })
 // })
-var tempUsersArr = [];  
-for (var i = 1; i< 101; i++){
-  tempUsersArr[i]={
-    tempID: i,
-    needToRedirect: false,
-    action: ''
-  }
-}
 
-var tempCounter = 1;  
-//route for server to respond if user is logged in
-app.get("/api/loggedin", (req, res) => {
-  console.log('is user logged in?')
-  console.log(`--------logged in answer is ${isLoggedIn(req, res)}--------`)
-  var tempUserObj = {};  
-  if (!isLoggedIn(req, res)) {
-    tempUserObj = tempUsersArr[tempCounter]  ;
-  } else tempUserObj = null;
-  tempCounter ++;  
-  res.json({
-    logged: isLoggedIn(req,res),
-    tempUser: tempUserObj
-  })
-})
 
 // app.get("/api/clientId", (req, res)=> {
 //   // res.json(process.env.GOOGLE_CLIENT_ID);

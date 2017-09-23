@@ -12,14 +12,20 @@ class LoginOrStart extends React.Component {
     var that = this; 
     axios.get('/api/loggedin').then((logincheck) =>{
       console.log('/api/loggedin returns')
+      console.log('tempID is ', logincheck.data.tempID)
       that.props.updateLogin(logincheck)
-      axios.get('/api/user').then((foundUser) => {
+      //check database
+      axios.get(`/api/user/${logincheck.data.tempID}`).then((foundUserObj) => {
         console.log('/api/user returns')
-        console.log('foundUser received', foundUser)
-        if(foundUser.data !== null) {
-          that.props.updateUser(foundUser.data)
+        console.log('foundUserObj received', foundUserObj)
+        if(foundUserObj.data.user !== null) {
+          that.props.updateUser(foundUserObj.data.user)
         }
-        that.render();
+        if (foundUserObj.data.needToRedirect){
+            console.log('REDIRECTING')
+        //history.push
+        }
+        else that.render();
       })
     })
   }
@@ -33,7 +39,7 @@ class LoginOrStart extends React.Component {
               <br />
               <h4 className="card-text">Log in with Linkedin and start accomplishing your dreams today.</h4>
               <br/>
-              <a href={`auth/linkedin/create/${this.props.tempUser.tempID}`} className="btn btn-primary">Login(create mesh)</a>
+              <a href={`auth/linkedin/create/${this.props.tempID}`} className="btn btn-primary">Login(create mesh)</a>
           </div>
         </div>
       )
