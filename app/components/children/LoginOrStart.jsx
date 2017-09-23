@@ -32,7 +32,7 @@ class LoginOrStart extends React.Component {
               <br />
               <h4 className="card-text">Log in with Linkedin and start accomplishing your dreams today.</h4>
               <br/>
-              <a href="auth/google" className="btn btn-primary">Login</a>
+              <a href="auth/linkedin" className="btn btn-primary">Login</a>
           </div>
         </div>
       )

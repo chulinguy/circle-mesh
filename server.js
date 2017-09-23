@@ -57,7 +57,7 @@ app.get('/auth/linkedin', passport.authenticate('linkedin'), (req, res) => {
 
 });
 
-app.get('/auth/linkedin/callback', passport.authenticate('google', {
+app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
 
   successRedirect: '/',
   failureRedirect: '/auth/linkedin' 
@@ -144,7 +144,7 @@ app.put('/api/:taskTitle', (req, res) => {
 //route for server to respond if user is logged in
 app.get("/api/loggedin", (req, res) => {
   console.log('is user logged in?')
-  console.log(`answer is ${isLoggedIn(req, res)}`)
+  console.log(`--------logged in answer is ${isLoggedIn(req, res)}--------`)
   res.json({
     logged: isLoggedIn(req,res)
   })
@@ -176,10 +176,8 @@ app.listen(port, function() {
 //helper function to check if user is logged in
 function isLoggedIn(req, res) {
     if (req.isAuthenticated()){
-      console.log('----user is logged in----');
       return true;
     } else {
-      console.log('----user is not logged in----');
       return false
     }
 }
