@@ -2,6 +2,7 @@ import React from "react";
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 
+
 class LoginOrStart extends React.Component {
   constructor(props){
     super(props);
@@ -23,7 +24,7 @@ class LoginOrStart extends React.Component {
     })
   }
 
-  render() {
+  render(props) {
     if (this.props.userLogged === false && this.props.serverResponded === true) {
       var content = (
         <div className="container card text-center login">
@@ -32,7 +33,7 @@ class LoginOrStart extends React.Component {
               <br />
               <h4 className="card-text">Log in with Linkedin and start accomplishing your dreams today.</h4>
               <br/>
-              <a href="auth/linkedin" className="btn btn-primary">Login</a>
+              <a href={`auth/linkedin/create/${this.props.tempUser.tempID}`} className="btn btn-primary">Login(create mesh)</a>
           </div>
         </div>
       )

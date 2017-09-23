@@ -37,6 +37,7 @@ app.use(passport.session()); // persistent login sessions
 
 // Database configuration with mongoose and model requires
 var User = require('./models/User.js');
+var Mesh = require('./models/Mesh.js');
 //database logic
 if (process.env.MONGODB_URI || process.env.NODE_ENV === 'production') mongoose.connect(process.env.MONGODB_URI);
 else mongoose.connect("mongodb://localhost/meshDB");
@@ -51,11 +52,19 @@ db.once('open', function() {
 });
 
 //SERVER LOGIC
+var needToRedirect = false;  
+var action ='';
+//Linkedin passport
+app.get('/auth/linkedin/create/:tempID', function(req, res, next){
+  console.log('CHANGING NEED TO REDIRECT');
+  tempUsersArr[tempID].needToRedirect = true;
+  tempUsersArr[tempID].action = "create";
+  next();
+},
+  passport.authenticate('linkedin')
+);
 
-//Google passport
-app.get('/auth/linkedin', passport.authenticate('linkedin'), (req, res) => {
-
-});
+app.get('/auth/linkedin', passport.authenticate('linkedin'));
 
 app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
 
@@ -77,76 +86,87 @@ app.get('/api/user',(req, res) => {
 
 })
 
-//route for user to create a goal
-// app.post('/api/goal', (req, res) => {
-//   //TODO: check with front end to make sure req.body data format is correct
-//   console.log('REQ.BODY of goal post', req.body);
-//   var goalObj = {
-//     goalTitle: req.body.goalTitle, 
-//     goalDue: req.body.goalDue, 
-//   };
-//   User.findOneAndUpdate({_id: req.session.passport.user},{goal: goalObj}, (err, foundUser) => {
-//     if (err) throw err;
-//     console.log('goal added to this user');
-//     res.send('goal inserted');
-//   })
-// })
-
-
-//route for user to check off a task
-app.put('/api/:taskTitle', (req, res) => {
-  //query MongoDB to update that task of goal of user
-  console.log(`trying to update ${req.params.taskTitle}`)
-  console.log(`of user ${req.session.passport.user}`)
-  User.findOneAndUpdate({
-    _id: req.session.passport.user,
-    
-    'tasks.taskTitle': req.params.taskTitle
-  },{
-    $set: {
-      "tasks.$.taskComplete": true
-
-    }
-  }, (err, foundUser) => {
+//route for user to create a mesh
+app.post('/api/mesh/:meshname', (req, res) => {
+  //TODO: check with front end to make sure req.body data format is correct
+  console.log('REQ.BODY of mesh post', req.body);
+  Mesh.create({meshname: req.params.meshname}, (err, data) => {
     if (err) throw err;
-    console.log('foundUser for task update is')
-    console.log(foundUser)
-    var newGoalObj = {
-      goalTitle: '', 
-      goalDue: '', 
-    };
-    var taskLeftBeforeUpdate = 0; 
-    for (var i = 0; i<foundUser.tasks.length; i++) {
-      if (foundUser.tasks[i].taskTitle && !foundUser.tasks[i].taskComplete) taskLeftBeforeUpdate ++;
-    }
-    //if there is only one task left before update
-    if (taskLeftBeforeUpdate === 1) {
-      //set user goal to blank obj / delete the goal
-      User.findOneAndUpdate({_id: req.session.passport.user},{
-        $set: {
-          "goal": {},
-          "tasks":[],
-          "gearLevel":  1
-        }
-      }, (err, doc) => {
-        console.log('whole goal completed')
-        res.json({
-          goalComplete: true
-        })
-      })
-    } else {
-      console.log('task checked off')
-      res.send('task checked off ')
-    }
+    console.log('new mesh created');
+    res.send('mesh created');
   })
 })
 
+
+//route for user to check off a task
+// app.put('/api/:taskTitle', (req, res) => {
+//   //query MongoDB to update that task of goal of user
+//   console.log(`trying to update ${req.params.taskTitle}`)
+//   console.log(`of user ${req.session.passport.user}`)
+//   User.findOneAndUpdate({
+//     _id: req.session.passport.user,
+    
+//     'tasks.taskTitle': req.params.taskTitle
+//   },{
+//     $set: {
+//       "tasks.$.taskComplete": true
+
+//     }
+//   }, (err, foundUser) => {
+//     if (err) throw err;
+//     console.log('foundUser for task update is')
+//     console.log(foundUser)
+//     var newGoalObj = {
+//       goalTitle: '', 
+//       goalDue: '', 
+//     };
+//     var taskLeftBeforeUpdate = 0; 
+//     for (var i = 0; i<foundUser.tasks.length; i++) {
+//       if (foundUser.tasks[i].taskTitle && !foundUser.tasks[i].taskComplete) taskLeftBeforeUpdate ++;
+//     }
+//     //if there is only one task left before update
+//     if (taskLeftBeforeUpdate === 1) {
+//       //set user goal to blank obj / delete the goal
+//       User.findOneAndUpdate({_id: req.session.passport.user},{
+//         $set: {
+//           "goal": {},
+//           "tasks":[],
+//           "gearLevel":  1
+//         }
+//       }, (err, doc) => {
+//         console.log('whole goal completed')
+//         res.json({
+//           goalComplete: true
+//         })
+//       })
+//     } else {
+//       console.log('task checked off')
+//       res.send('task checked off ')
+//     }
+//   })
+// })
+var tempUsersArr = [];  
+for (var i = 1; i< 101; i++){
+  tempUsersArr[i]={
+    tempID: i,
+    needToRedirect: false,
+    action: ''
+  }
+}
+
+var tempCounter = 1;  
 //route for server to respond if user is logged in
 app.get("/api/loggedin", (req, res) => {
   console.log('is user logged in?')
   console.log(`--------logged in answer is ${isLoggedIn(req, res)}--------`)
+  var tempUserObj = {};  
+  if (!isLoggedIn(req, res)) {
+    tempUserObj = tempUsersArr[tempCounter]  ;
+  } else tempUserObj = null;
+  tempCounter ++;  
   res.json({
-    logged: isLoggedIn(req,res)
+    logged: isLoggedIn(req,res),
+    tempUser: tempUserObj
   })
 })
 

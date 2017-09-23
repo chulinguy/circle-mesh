@@ -7,6 +7,7 @@ import Form from './children/Form.jsx';
 import Mesh from './children/Mesh.jsx';
 
 
+
 class Routes extends React.Component {
   constructor(props){
     super(props)
@@ -15,18 +16,28 @@ class Routes extends React.Component {
       serverResponded: false,
       username: 'George',
       meshes:[],
-      currentMeshIndex: 0
+      currentMeshName: '',
+      action: '',
+      needToRedirect: false,
+      tempUser: null
     }
     this.updateLogin = this.updateLogin.bind(this);
     this.updateUser = this.updateUser.bind(this);
     this.createMesh = this.createMesh.bind(this);
   }
 
+  // componentDidUpdate(prevProps, prevState){
+  //   if (prevState.userLogged !== this.state.userLogged && prevState.serverResponded == this.state.serverResponded){
+  //     console.log('YES THANK GOD')
+  //   }
+  // }
+
   updateLogin(logincheck){
     var that = this;
     that.setState({
       serverResponded: true,
       userLogged: logincheck.data.logged,
+      tempUser: logincheck.data.tempUser
     })
     console.log('updated routesR\'s login states')
   }
@@ -42,23 +53,33 @@ class Routes extends React.Component {
     console.log('foundUser', foundUser.username)
   }
 
+  updateNeedToRedirect(bool){
+    this.setState({needToRedirect: bool});
+    console.log('needToRedirect updated')
+  }
+
   createMesh(){
 
   }
 
 
   render(){
+    var that = this;  
     return (
       <div>
         <Switch>
           <Route exact path="/"  render={(props) => (
-            <LoginOrStart 
+            <LoginOrStart {... props}
               updateLogin={this.updateLogin}
               updateUser={this.updateUser}
               userLogged = {this.state.userLogged}
               serverResponded = {this.state.serverResponded}
               meshes={this.state.meshes}
+              action={this.state.action}
+              history={this.props.history}
+              tempUser={this.state.tempUser}
             />
+            
           )}/>
 
           <Route path="/form" render={(props) => (
@@ -70,7 +91,7 @@ class Routes extends React.Component {
           <Route path="/mesh" render={(props) => (
             <Mesh
               username={this.state.username}
-              mesh={this.state.meshes[this.state.currentMeshIndex]}
+              mesh={this.state.meshes.filter((v) => (v.meshname === that.currentMeshName))[0]}
             />
           )}/>
 

@@ -53,6 +53,8 @@ var passport = function(passport) {
           }
           else {
             console.log('creating a new user');
+            // console.log('profile is')
+            // console.log(profile)
             User.create({
               'username' : profile.displayName,
             }, function(err, data){
