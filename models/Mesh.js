@@ -2,13 +2,18 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var MeshSchema = new Schema({
-  meshname: {
+  meshName: {
     type: String,
     unique: true,
     required: true
   },
-  
-  	users: []
+  meshDate: {
+    type: String
+  },
+  users: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  }]
 });
 
 var Mesh = mongoose.model("Mesh", MeshSchema);

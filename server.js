@@ -153,24 +153,24 @@ app.post('/api/turnOffRedirect/:tempID', (req, res) => {
 })
 
 //route for user to create a mesh
-app.post('/api/mesh/:meshname', (req, res) => {
+app.post('/api/mesh', (req, res) => {
   console.log('REQ.BODY of mesh post', req.body);
-  Mesh.create({meshname: req.params.meshname}, (err, data) => {
+  Mesh.create({
+    meshName: req.body.meshName,
+    meshDate: req.body.meshDate
+  }, (err, data) => {
     if (err) throw err;
     console.log('new mesh created');
-    res.send('mesh created');
+    res.end();
   })
 })
 
-// app.get("/api/clientId", (req, res)=> {
-//   // res.json(process.env.GOOGLE_CLIENT_ID);
-//   if (process.env.PORT){
-//     res.send(process.env.GOOGLE_CLIENT_ID)
-//   } else {
-//     var configAuth = require('./config/auth.js')
-//     res.send(configAuth.googleAuth.clientID);
-//   }
-// })
+//route to retrieve meshes
+app.get('/api/meshes', (req, res) => {
+  Mesh.find({},(err, data)=> {
+    res.json(data)
+  })
+})
 
 //every other page goes to our index page
 app.get('*', function (request, response){

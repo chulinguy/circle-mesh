@@ -38,11 +38,13 @@ class LoginOrStart extends React.Component {
   }
 
   render(props) {
+    var welcomeUser ='';
     if (this.props.userLogged === false && this.props.serverResponded === true) {
+      welcomeUser = `User ${this.props.tempID}`; 
       var content = (
         <div className="container card text-center login">
           <div className="card-block">
-              <h1 className="card-title">Welcome to Circle-Mesh</h1>
+              <h1 className="card-title">Welcome to Circle-Mesh, {welcomeUser}</h1>
               <br />
               <h4 className="card-text">Log in with Linkedin</h4>
               <br/>
@@ -51,10 +53,11 @@ class LoginOrStart extends React.Component {
         </div>
       )
     } else if (this.props.userLogged === true && this.props.serverResponded === true){
+      welcomeUser = `${this.props.username}`; 
       var content = (
         <div className="container card text-center login">
           <div className="card-block">
-              <h1 className="card-title">Welcome to Circle-Mesh</h1>
+              <h1 className="card-title">Welcome to Circle-Mesh, {welcomeUser}</h1>
               <br />
               <h4 className="card-text">Create or Join a mesh</h4>
               <br/>
