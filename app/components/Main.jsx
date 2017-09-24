@@ -13,7 +13,7 @@ class Main extends React.Component {
     return(
         <div>
           <Header />
-          <RoutesR history={this.props.history}/>
+          <RoutesR />
         </div>
         
     )};

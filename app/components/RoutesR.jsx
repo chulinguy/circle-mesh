@@ -78,7 +78,6 @@ class Routes extends React.Component {
               meshes={this.state.meshes}
               action={this.state.action}
               tempID={this.state.tempID}
-              history={this.props.history}
             />
             
           )}/>

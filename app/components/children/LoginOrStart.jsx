@@ -1,7 +1,7 @@
 import React from "react";
 import axios from 'axios';
 import {Link} from 'react-router-dom';
-
+import history from '../../history.js';
 
 class LoginOrStart extends React.Component {
   constructor(props){
@@ -23,8 +23,13 @@ class LoginOrStart extends React.Component {
           that.props.updateUser(foundUserObj.data.user)
         }
         if (foundUserObj.data.needToRedirect){
+            axios.post(`/api/turnOffRedirect/${logincheck.data.tempID}`).then(()=>{
+              console.log('TURNING OFF REDIRECT')
+            })
             console.log('REDIRECTING')
+            var redirectPath = foundUserObj.data.redirectAction; 
             console.log(this.props.history)
+            history.replace({ pathname: `/${redirectPath}` })
         //history.push
         }
         else that.render();

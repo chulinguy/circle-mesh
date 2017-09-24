@@ -1,11 +1,11 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import  Main from './components/Main.jsx';
 import history from './history.js';
 
 render((
-  <BrowserRouter>
-    <Main history={history}/>
-  </BrowserRouter>), 
+  <Router history={history}>
+    <Main/>
+  </Router>), 
 document.getElementById('app'));
