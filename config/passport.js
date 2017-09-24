@@ -4,8 +4,8 @@ var User = require('../models/User.js');
 var passport = function(passport) {
 	passport.serializeUser(function(user, done){
     console.log('serializeUser is being called!')
-    console.log('user obj is')
-    console.log(user)
+    // console.log('user obj is')
+    // console.log(user)
     done(null, user.id);
 	});
 
@@ -37,7 +37,7 @@ var passport = function(passport) {
 	  function(accessToken, refreshToken, profile, done) {
       // console.log("access", accessToken)
       // console.log("refresh", refreshToken)
-      console.log("profile is", profile)
+      // console.log("profile is", profile)
       process.nextTick(function(){
         console.log('trying to find user')
         // console.log(`profile displayname is ${profile.displayName}`)
@@ -57,6 +57,9 @@ var passport = function(passport) {
             // console.log(profile)
             User.create({
               'username' : profile.displayName,
+              'photo': profile.photos[0].value,
+              'job': profile._json.headline,
+              'linkedinURL': profile._json.siteStandardProfileRequest.url
             }, function(err, data){
               if (err) {
                 console.log(err)
@@ -66,7 +69,7 @@ var passport = function(passport) {
                 return done(null, data)
               };
             })  
-          }      
+          }     
         })
       })
     }

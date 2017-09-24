@@ -7,7 +7,17 @@ var UserSchema = new Schema({
     unique: true,
     required: true
   },
-  
+  photo: {
+    type: String,
+    unique: true
+  },
+  job: {
+    type: String
+  },
+  linkedinURL: {
+    type: String,
+    unique: true,
+  },
 	messagesSent: {
     type: Number,
     default: 0

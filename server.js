@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var path = require('path');
 var mongoose = require('mongoose');
 var logger = require("morgan");
+var favicon = require('serve-express');
 mongoose.Promise = Promise;
 
 var router = express.Router();
@@ -21,7 +22,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
-
+app.use(favicon(path.join(__dirname, 'public', 'asserts','images','favicon.ico')))
 //passport logic
 require('./config/passport.js')(passport);
 
@@ -57,21 +58,37 @@ var action ='';
 //Linkedin passport
 app.get('/auth/linkedin/create/:tempID', function(req, res, next){
   console.log('CHANGING NEED TO REDIRECT');
-  console.log(req.params)
+  // console.log(req.params)
   // console.log(req.query)
-  console.log('I am a string?', req.params.tempID)
+  // console.log('I am a string?', req.params.tempID)
+
+  //TODO: MOVE logic down to after auth ???
   var parsedTempID = parseInt(req.params.tempID);
-  console.log('I am a number?', parsedTempID)
+  // console.log('I am a number?', parsedTempID)
   tempUsersArr[parsedTempID].needToRedirect = true;
   tempUsersArr[parsedTempID].action = "create";
+  tempIDTracker = parsedTempID;
+  console.log("tempUserArr is")
+      console.log(tempUsersArr)
   next();
 },
-  passport.authenticate('linkedin')
+  passport.authenticate('linkedin'),
+  function(req, res){
+    console.log('======after passport auth, req.user is =====')
+    console.log(req.user)
+    // res.redirect('auth/linkedin/callback')
+  }
+// function(req){
+//   console.log('3rd callback func')
+//   console.log(req.session)
+// }
 );
+var tempIDTracker = 0; 
 
 app.get('/auth/linkedin', passport.authenticate('linkedin'));
 
-app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
+app.get('/auth/linkedin/callback',
+ passport.authenticate('linkedin', {
 
   successRedirect: '/',
   failureRedirect: '/auth/linkedin' 
@@ -82,38 +99,52 @@ app.get('/api/user/:tempID',(req, res) => {
   var userToFind = '';  
   console.log('req session is')
   console.log(req.session)
-  if (req.session.passport) userToFind =  req.session.passport.user;
+  if (req.session.passport) userToFind = req.session.passport.user;
   User.findById(userToFind, (err, foundUser) => {
     // console.log('foundUser', foundUser);
     var userObj = {};
-    userObj.user = foundUser
-    userObj.needToRedirect = tempUsersArr[req.params.tempID].needToRedirect
-    res.json(userObj)
+    userObj.user = foundUser;
+    // console.log('userObj is (after assigning key user)')
+    // console.log(userObj)
+    var parsedTempID = parseInt(req.params.tempID);
+    if (parsedTempID > 0){
+      console.log('parsedtempID is', parsedTempID)
+      var tempUserRedirectStatus = tempUsersArr[parsedTempID].needToRedirect;
+      console.log("tempUserRedirect Status is ")
+      console.log(tempUserRedirectStatus)
+      userObj.needToRedirect = tempUserRedirectStatus;
+      console.log("tempUserArr is")
+      console.log(tempUsersArr)
+    }
+    res.json(userObj);
   })
 
 })
 
 var tempUsersArr = [];  
-for (var i = 1; i< 101; i++){
+for (var i = 1; i< 5; i++){
   tempUsersArr[i]={
     tempID: i,
     needToRedirect: false,
-    action: ''
+    action: '',
+    passportID: ''
   }
 }
 
 var tempCounter = 1;  
 //route for server to respond if user is logged in
 app.get("/api/loggedin", (req, res) => {
-  console.log('is user logged in?')
-  console.log(`--------logged in answer is ${isLoggedIn(req, res)}--------`)
-  var redirectCheck = false;
+  console.log(`is User logged in?? ${isLoggedIn(req, res)}`)
+  // var redirectCheck = false;
   if (isLoggedIn(req, res)) {
-    // redirectCheck = tempUsersArr[].needToRedirect ;
-  } else tempCounter ++;  
+    // TODO
+  } else {
+    tempCounter ++;
+    var sentTempID = tempCounter
+  }  
   res.json({
     logged: isLoggedIn(req,res),
-    tempID: tempCounter
+    tempID: sentTempID
   })
 })
 

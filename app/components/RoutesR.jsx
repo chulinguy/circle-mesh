@@ -24,6 +24,7 @@ class Routes extends React.Component {
     this.updateLogin = this.updateLogin.bind(this);
     this.updateUser = this.updateUser.bind(this);
     this.createMesh = this.createMesh.bind(this);
+    this.createMesh = this.createMesh.bind(this);
   }
 
   // componentDidUpdate(prevProps, prevState){
@@ -53,10 +54,10 @@ class Routes extends React.Component {
     console.log('foundUser', foundUser.username)
   }
 
-  updateNeedToRedirect(bool){
-    this.setState({needToRedirect: bool});
-    console.log('needToRedirect updated')
-  }
+  // updateNeedToRedirect(bool){
+  //   this.setState({needToRedirect: bool});
+  //   console.log('needToRedirect updated')
+  // }
 
   createMesh(){
 

@@ -18,11 +18,13 @@ class LoginOrStart extends React.Component {
       axios.get(`/api/user/${logincheck.data.tempID}`).then((foundUserObj) => {
         console.log('/api/user returns')
         console.log('foundUserObj received', foundUserObj)
-        if(foundUserObj.data.user !== null) {
+        if(foundUserObj.data.user) {
+          console.log('react trying to update user')
           that.props.updateUser(foundUserObj.data.user)
         }
         if (foundUserObj.data.needToRedirect){
             console.log('REDIRECTING')
+            console.log(this.props.history)
         //history.push
         }
         else that.render();
@@ -37,7 +39,7 @@ class LoginOrStart extends React.Component {
           <div className="card-block">
               <h1 className="card-title">Welcome to Circle-Mesh</h1>
               <br />
-              <h4 className="card-text">Log in with Linkedin and start accomplishing your dreams today.</h4>
+              <h4 className="card-text">Log in with Linkedin</h4>
               <br/>
               <a href={`auth/linkedin/create/${this.props.tempID}`} className="btn btn-primary">Login(create mesh)</a>
           </div>
@@ -49,7 +51,7 @@ class LoginOrStart extends React.Component {
           <div className="card-block">
               <h1 className="card-title">Welcome to Circle-Mesh</h1>
               <br />
-              <h4 className="card-text">Create or see your current goal</h4>
+              <h4 className="card-text">Create or Join a mesh</h4>
               <br/>
 
               <Link to="/form" className="btn btn-success create_btn">Create a Mesh</Link>
