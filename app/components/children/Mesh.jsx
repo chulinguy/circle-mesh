@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-class Dashboard extends React.Component {
+class Mesh extends React.Component {
   
   constructor(props){
     super(props);
@@ -9,6 +9,10 @@ class Dashboard extends React.Component {
     
   componentDidMount(){
 
+  }
+
+  componentDidUpdate(){
+    this.render();
   }
 
   render() {
@@ -25,7 +29,7 @@ class Dashboard extends React.Component {
             
             </div>
             <Link to="/">
-              <button className="btn btn-success">Create New Goal</button>
+              <button className="btn btn-success">Back to homepage</button>
             </Link>
         </div>
 
@@ -34,8 +38,4 @@ class Dashboard extends React.Component {
   }
 }
 
-
-// Dashboard.contextTypes = {
-//   router: PropTypes.object
-// }
-export default Dashboard;
+export default Mesh;

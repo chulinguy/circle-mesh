@@ -53,8 +53,10 @@ class Routes extends React.Component {
 
 
   createMesh(meshObj){
+    var that = this;  
     axios.post('/api/mesh', meshObj).then((data)=>{
       console.log('created a new mesh')
+      that.getAllMeshes();
     })
   }
 
@@ -67,17 +69,28 @@ class Routes extends React.Component {
     history.push({ pathname: `/mesh/${meshID}` })
   }
 
-  componentDidUpdate(prevProps, prevState){
+
+  getAllMeshes(){
+    var that = this;  
+    axios.get('/api/meshes').then((meshesObj)=>{
+      if (Object.keys(meshesObj.data).length){
+        // console.log('meshesObj.data is')
+        // console.log(meshesObj.data)
+        that.setState({meshes: meshesObj.data})
+      }
+    })
+  }
+  componentDidMount(){
     var that = this; 
-    if (prevState.meshes.length !== this.state.meshes.length || this.state.meshes.length === 0 ){
-      axios.get('/api/meshes').then((meshesObj)=>{
-        if (Object.keys(meshesObj.data).length){
-          console.log('meshesObj.data is')
-          console.log(meshesObj.data)
-          that.setState({meshes: meshesObj.data})
-        }
-      })
+    setInterval(that.getAllMeshes,10000)
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    if (prevState.meshes.length !== this.state.meshes.length || this.state.meshes.length ===0 ){
+      console.log(this.state.meshes)
+      this.getAllMeshes()
     }
+    
   }
   render(){
     var that = this;  

@@ -115,7 +115,7 @@ app.get('/api/user/:tempID',(req, res) => {
 })
 
 var tempUsersArr = [];  
-for (var i = 1; i< 5; i++){
+for (var i = 1; i< 200; i++){
   tempUsersArr[i]={
     tempID: i,
     needToRedirect: false,
