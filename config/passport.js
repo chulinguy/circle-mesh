@@ -19,7 +19,7 @@ var passport = function(passport) {
   if (process.env.MONGODB_URI || process.env.PORT){
     var clientID = process.env.linkedin_CLIENT_ID;
     var clientSecret = process.env.linkedin_CLIENT_SECRET;
-    var callbackURL = process.env.linkedin_CALLBACK_URL;
+    var callbackURL = 'https://circle-mesh.herokuapp.com/auth/linkedin/callback';
   } else {
     var configAuth = require('./auth.js');
     var clientID = configAuth.linkedinAuth.clientID;
