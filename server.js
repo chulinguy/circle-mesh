@@ -53,8 +53,7 @@ db.once('open', function() {
 });
 
 //SERVER LOGIC
-var needToRedirect = false;  
-var action ='';
+
 //Linkedin passport
 app.get('/auth/linkedin/create/:tempID', function(req, res, next){
   console.log('CHANGING NEED TO REDIRECT');
@@ -63,8 +62,8 @@ app.get('/auth/linkedin/create/:tempID', function(req, res, next){
   tempUsersArr[parsedTempID].needToRedirect = true;
   tempUsersArr[parsedTempID].action = "form";
   tempIDTracker = parsedTempID;
-  console.log("tempUserArr is")
-  console.log(tempUsersArr)
+  // console.log("tempUserArr is")
+  // console.log(tempUsersArr)
   next();
 },  
   passport.authenticate('linkedin')    
@@ -76,8 +75,8 @@ app.get('/auth/linkedin/callback', function(req, res, next) {
     if (!user) { return res.redirect('/auth/linkedin'); }
     req.logIn(user, function(err) {
       if (err) { return next(err); }
-      console.log('============req.session in the login callback')
-      console.log(req.session)
+      // console.log('============req.session in the login callback')
+      // console.log(req.session)
       tempUsersArr[tempIDTracker].passportID = req.session.passport.user
       return res.redirect('/');
     });
@@ -107,8 +106,8 @@ app.get('/api/user/:tempID',(req, res) => {
       // console.log(tempUserRedirectStatus)
       userObj.needToRedirect = tempUserRedirectStatus;
       userObj.redirectAction = tempUserRedirectAction;
-      console.log("tempUserArr is")
-      console.log(tempUsersArr)
+      // console.log("tempUserArr is")
+      // console.log(tempUsersArr)
     }
     res.json(userObj);
   })
@@ -148,14 +147,13 @@ app.post('/api/turnOffRedirect/:tempID', (req, res) => {
   console.log('trying to turn off redirect')
   var found = tempUsersArr.filter((v)=>(v.passportID===req.session.passport.user))[0];
   found.needToRedirect = false; 
-  console.log("tempUserArr is")
-  console.log(tempUsersArr)
+  // console.log("tempUserArr is")
+  // console.log(tempUsersArr)
   res.end();
 })
 
 //route for user to create a mesh
 app.post('/api/mesh/:meshname', (req, res) => {
-  //TODO: check with front end to make sure req.body data format is correct
   console.log('REQ.BODY of mesh post', req.body);
   Mesh.create({meshname: req.params.meshname}, (err, data) => {
     if (err) throw err;
@@ -163,56 +161,6 @@ app.post('/api/mesh/:meshname', (req, res) => {
     res.send('mesh created');
   })
 })
-
-
-//route for user to check off a task
-// app.put('/api/:taskTitle', (req, res) => {
-//   //query MongoDB to update that task of goal of user
-//   console.log(`trying to update ${req.params.taskTitle}`)
-//   console.log(`of user ${req.session.passport.user}`)
-//   User.findOneAndUpdate({
-//     _id: req.session.passport.user,
-    
-//     'tasks.taskTitle': req.params.taskTitle
-//   },{
-//     $set: {
-//       "tasks.$.taskComplete": true
-
-//     }
-//   }, (err, foundUser) => {
-//     if (err) throw err;
-//     console.log('foundUser for task update is')
-//     console.log(foundUser)
-//     var newGoalObj = {
-//       goalTitle: '', 
-//       goalDue: '', 
-//     };
-//     var taskLeftBeforeUpdate = 0; 
-//     for (var i = 0; i<foundUser.tasks.length; i++) {
-//       if (foundUser.tasks[i].taskTitle && !foundUser.tasks[i].taskComplete) taskLeftBeforeUpdate ++;
-//     }
-//     //if there is only one task left before update
-//     if (taskLeftBeforeUpdate === 1) {
-//       //set user goal to blank obj / delete the goal
-//       User.findOneAndUpdate({_id: req.session.passport.user},{
-//         $set: {
-//           "goal": {},
-//           "tasks":[],
-//           "gearLevel":  1
-//         }
-//       }, (err, doc) => {
-//         console.log('whole goal completed')
-//         res.json({
-//           goalComplete: true
-//         })
-//       })
-//     } else {
-//       console.log('task checked off')
-//       res.send('task checked off ')
-//     }
-//   })
-// })
-
 
 // app.get("/api/clientId", (req, res)=> {
 //   // res.json(process.env.GOOGLE_CLIENT_ID);
