@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import history from '../history.js';
 
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 // import helpers from './utils/helpers';
@@ -15,11 +16,14 @@ class Routes extends React.Component {
       serverResponded: false,
       tempID: 0,
       username: '',
-      meshes:[]
+      meshes:[],
+      currentMeshID: '',
+      currentMeshName: ''
     }
     this.updateLogin = this.updateLogin.bind(this);
     this.updateUser = this.updateUser.bind(this);
     this.createMesh = this.createMesh.bind(this);
+    this.joinCurrentMesh = this.joinCurrentMesh.bind(this);
   }
 
   // componentDidUpdate(prevProps, prevState){
@@ -47,20 +51,34 @@ class Routes extends React.Component {
     console.log('foundUser', foundUser.username)
   }
 
-  componentDidMount(){
-    var that = this; 
-    axios.get('/api/meshes').then((meshesObj)=>{
-      console.log('meshesObj.data is')
-      console.log(meshesObj.data)
-      that.setState({meshes: meshesObj.data})
+
+  createMesh(meshObj){
+    axios.post('/api/mesh', meshObj).then((data)=>{
+      console.log('created a new mesh')
     })
   }
 
-  createMesh(meshObj){
-    axios.post('/api/mesh', meshObj).then()
+  joinCurrentMesh(meshID, meshName){
+    this.setState({
+      currentMeshID:meshID,
+      currentMeshName: meshName
+    });
+    //TODO: add this user to mesh via Mongoose
+    history.push({ pathname: `/mesh/${meshID}` })
   }
 
-
+  componentDidUpdate(prevProps, prevState){
+    var that = this; 
+    if (prevState.meshes.length !== this.state.meshes.length || this.state.meshes.length === 0 ){
+      axios.get('/api/meshes').then((meshesObj)=>{
+        if (Object.keys(meshesObj.data).length){
+          console.log('meshesObj.data is')
+          console.log(meshesObj.data)
+          that.setState({meshes: meshesObj.data})
+        }
+      })
+    }
+  }
   render(){
     var that = this;  
     return (
@@ -75,6 +93,8 @@ class Routes extends React.Component {
               meshes={this.state.meshes}
               tempID={this.state.tempID}
               username={this.state.username}
+              currentMesh={this.state.currentMesh}
+              joinCurrentMesh={this.joinCurrentMesh}
             />
             
           )}/>
@@ -88,7 +108,8 @@ class Routes extends React.Component {
           <Route path="/mesh" render={(props) => (
             <Mesh
               username={this.state.username}
-              mesh={this.state.meshes.filter((v) => (v.meshName === that.currentMeshName))[0]}
+              currentMeshID={this.state.currentMeshID}
+              currentMeshNme={this.state.currentMeshName}
             />
           )}/>
 

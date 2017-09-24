@@ -167,6 +167,7 @@ app.post('/api/mesh', (req, res) => {
 
 //route to retrieve meshes
 app.get('/api/meshes', (req, res) => {
+  console.log('sending all available meshes')
   Mesh.find({},(err, data)=> {
     res.json(data)
   })

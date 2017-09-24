@@ -17,7 +17,7 @@ class Form extends React.Component {
   };
 
   meshNameChangeHandler(event){
-    this.setState({meshname: event.target.value})
+    this.setState({meshName: event.target.value})
   }
 
   meshDateChangeHandler(event){

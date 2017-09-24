@@ -1,7 +1,5 @@
 import React from 'react';
-// import helpers from '../utils/helpers';
 import {Link} from 'react-router-dom';
-// import PropTypes from "prop-types";
 
 class Dashboard extends React.Component {
   
@@ -9,12 +7,9 @@ class Dashboard extends React.Component {
     super(props);
   }
     
-  // clickGoalHandler (goalTitle){
-  //   var that = this; 
-  //   helpers.completeGoal(goalTitle).then((response)=>{
-  //     that.props.createGoal({},{tasks:[]})
-  //   })
-  // }
+  componentDidMount(){
+
+  }
 
   render() {
     var that = this;
@@ -22,8 +17,14 @@ class Dashboard extends React.Component {
     
       return (
         <div> 
-          <h1> You are at Mesh</h1>
-            <Link to="/form">
+          <h1> You are at Mesh {this.props.currentMeshName}</h1>
+            <div id="yourself">
+
+            </div> 
+            <div id='others'>
+            
+            </div>
+            <Link to="/">
               <button className="btn btn-success">Create New Goal</button>
             </Link>
         </div>

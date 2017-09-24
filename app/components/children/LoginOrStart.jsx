@@ -6,6 +6,7 @@ import history from '../../history.js';
 class LoginOrStart extends React.Component {
   constructor(props){
     super(props);
+    
   }
 
   componentDidMount(){
@@ -39,6 +40,7 @@ class LoginOrStart extends React.Component {
 
   render(props) {
     var welcomeUser ='';
+    var that = this;  
     if (this.props.userLogged === false && this.props.serverResponded === true) {
       welcomeUser = `User ${this.props.tempID}`; 
       var content = (
@@ -46,6 +48,22 @@ class LoginOrStart extends React.Component {
           <div className="card-block">
               <h1 className="card-title">Welcome to Circle-Mesh, {welcomeUser}</h1>
               <br />
+
+              <div className='panel'>
+                <div className='panel-heading'>
+                  <h5>Existing Meshes</h5>
+                </div>
+                <div className='panel-body'>
+                  {this.props.meshes.map(
+                    function(mesh, i){
+                      return(
+                        <a key={i} href={`auth/linkedin/mesh/${that.props.tempID}/${mesh._id}`} className="btn btn-success">Join {mesh.meshName}</a>
+                      )
+                    })
+                  }
+                </div>
+              </div>
+
               <h4 className="card-text">Log in with Linkedin</h4>
               <br/>
               <a href={`auth/linkedin/create/${this.props.tempID}`} className="btn btn-primary">Login(create mesh)</a>
@@ -59,11 +77,28 @@ class LoginOrStart extends React.Component {
           <div className="card-block">
               <h1 className="card-title">Welcome to Circle-Mesh, {welcomeUser}</h1>
               <br />
+
+              <div className='panel'>
+                <div className='panel-heading'>
+                  <h5>Existing Meshes</h5>
+                </div>
+                <div className='panel-body'>
+                  {this.props.meshes.map(
+                    function(mesh, i){
+                      return(
+                        <div key={i} onClick={that.props.joinCurrentMesh.bind(that,mesh._id, mesh.meshName)}>
+                          <p className="btn btn-success">Join {mesh.meshName}</p>
+                        </div>
+                      )
+                    })
+                  }
+                </div>
+              </div>
+
               <h4 className="card-text">Create or Join a mesh</h4>
               <br/>
 
               <Link to="/form" className="btn btn-success create_btn">Create a Mesh</Link>
-              <Link to="/mesh" className="btn btn-info">Join a Mesh</Link>
 
           </div>
         </div>
