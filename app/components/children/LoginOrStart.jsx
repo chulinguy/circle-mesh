@@ -86,7 +86,7 @@ class LoginOrStart extends React.Component {
                   {this.props.meshes.map(
                     function(mesh, i){
                       return(
-                        <div key={i} onClick={that.props.joinCurrentMesh.bind(that,mesh._id, mesh.meshName)}>
+                        <div key={i} onClick={that.props.joinCurrentMesh.bind(that,mesh._id, <mes></mes>h.meshName)}>
                           <p className="btn btn-success">Join {mesh.meshName}</p>
                         </div>
                       )
