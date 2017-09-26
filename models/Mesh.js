@@ -10,6 +10,27 @@ var MeshSchema = new Schema({
   meshDate: {
     type: String
   },
+  startDate: {
+    type: String
+  },
+  meshLocation: {
+    type: String
+  },
+  meshCreatedLocation: {
+    type: String
+  }, 
+  meshCreatedAt: {
+    type: String,
+    default: Date.now
+  },
+  peakParticipantNumber: {
+    type: Number,
+    default: 0
+  },
+  chat: [{
+    userID: String,
+    message: String
+  }],
   users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"

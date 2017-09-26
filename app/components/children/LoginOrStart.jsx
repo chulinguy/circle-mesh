@@ -115,3 +115,7 @@ class LoginOrStart extends React.Component {
 }
 
 export default LoginOrStart;
+
+//additional login page for redirecting / terms and condition checkbox;
+//Needs timer for meshes
+//
