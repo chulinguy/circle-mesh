@@ -16,21 +16,20 @@ class Routes extends React.Component {
       serverResponded: false,
       tempID: 0,
       username: '',
+      job: '',
+      photo: '',
       meshes:[],
       currentMeshID: '',
-      currentMeshName: ''
+      currentMeshName: '',
+      currentCoordinate: {lng: 0, lat: 0},
+      currentMeshEndTimeMilliSec: 0
     }
     this.updateLogin = this.updateLogin.bind(this);
     this.updateUser = this.updateUser.bind(this);
     this.createMesh = this.createMesh.bind(this);
     this.joinCurrentMesh = this.joinCurrentMesh.bind(this);
+    this.getAllMeshes = this.getAllMeshes.bind(this);
   }
-
-  // componentDidUpdate(prevProps, prevState){
-  //   if (prevState.userLogged !== this.state.userLogged && prevState.serverResponded == this.state.serverResponded){
-  //     console.log('YES THANK GOD')
-  //   }
-  // }
 
   updateLogin(logincheck){
     var that = this;
@@ -45,10 +44,12 @@ class Routes extends React.Component {
   updateUser(foundUser){
     var that = this;
     that.setState({
-      username: foundUser.username,
+      username: foundUser.firstName,
+      photo: foundUser.photo,
+      job: foundUser.job
     })
     console.log('updated routesR\'s user & mesh states');
-    console.log('foundUser', foundUser.username)
+    console.log('foundUser', foundUser.firstName)
   }
 
 
@@ -60,10 +61,11 @@ class Routes extends React.Component {
     })
   }
 
-  joinCurrentMesh(meshID, meshName){
+  joinCurrentMesh(meshID, meshName, meshEndTimeMilliSec){
     this.setState({
       currentMeshID:meshID,
-      currentMeshName: meshName
+      currentMeshName: meshName, 
+      currentMeshEndTimeMilliSec: meshEndTimeMilliSec
     });
     //TODO: add this user to mesh via Mongoose
     history.push({ pathname: `/mesh/${meshID}` })
@@ -82,7 +84,7 @@ class Routes extends React.Component {
   }
   componentDidMount(){
     var that = this; 
-    setInterval(that.getAllMeshes,10000)
+    setInterval(that.getAllMeshes,60000)
   }
 
   componentDidUpdate(prevProps, prevState){
@@ -115,14 +117,18 @@ class Routes extends React.Component {
           <Route path="/form" render={(props) => (
             <Form 
               createMesh={this.createMesh}
+              currentCoordinate={this.state.currentCoordinate}
             />
           )}/>      
 
           <Route path="/mesh" render={(props) => (
             <Mesh
               username={this.state.username}
+              job={this.state.job}
+              photo={this.state.photo}
               currentMeshID={this.state.currentMeshID}
-              currentMeshNme={this.state.currentMeshName}
+              currentMeshName={this.state.currentMeshName}
+              currentMeshEndTimeMilliSec={this.state.currentMeshEndTimeMilliSec}
             />
           )}/>
 

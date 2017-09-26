@@ -139,11 +139,15 @@ var tempCounter = 1;
 //route for server to respond if user is logged in
 app.get("/api/loggedin", (req, res) => {
   console.log(`is User logged in?? ${isLoggedIn(req, res)}`)
+  // console.log(req)
   
   // var redirectCheck = false;
   if (isLoggedIn(req, res)) {
-    var foundTempUserID = tempUsersArr.filter((v)=>(v.passportID===req.session.passport.user))[0].tempID;
-    var sentTempID = foundTempUserID; 
+    var tempUserArrFiltered = tempUsersArr.filter((v)=>(v.passportID===req.session.passport.user));
+    if (tempUserArrFiltered.length > 0){
+      var foundTempUserID = tempUserArrFiltered[0].tempID
+      var sentTempID = foundTempUserID; 
+    } else var sentTempID = 0; 
   } else {
     tempCounter ++;
     var sentTempID = tempCounter;
@@ -165,10 +169,36 @@ app.post('/api/turnOffRedirect/:tempID', (req, res) => {
 
 //route for user to create a mesh
 app.post('/api/mesh', (req, res) => {
+  var today = new Date;
   console.log('REQ.BODY of mesh post', req.body);
+  var convertedLocalDateArr = req.body.meshDate.split("-");
+  convertedLocalDateArr [1] = parseInt(convertedLocalDateArr [1]) - 1 ; 
+  if (req.body.meshTime.slice(-2) === 'AM'){
+    if (req.body.meshTime.indexOf(' ') === 1){
+      var localHour = parseInt(req.body.meshTime.slice(0, 1));
+    } else var localHour = parseInt(req.body.meshTime.slice(0, 2));
+  } else if (req.body.meshTime.slice(-2) === 'PM'){
+    if (req.body.meshTime.indexOf(' ') === 1){
+      var localHour = 12 + parseInt(req.body.meshTime.slice(0, 1));
+    } else var localHour = 12 + parseInt(req.body.meshTime.slice(0, 2));
+  }
+  // console.log('localHour is', localHour);
+  var duration = parseInt(req.body.meshDuration);
+  var meshStartTimeLocal = new Date(...convertedLocalDateArr, localHour);
+  var meshEndTimeLocal = new Date(...convertedLocalDateArr, localHour + duration);
+  // console.log('meshStartTimeMilliSec is', meshStartTimeLocal.toString())
+  // console.log('meshStartTimeMilliSec is', meshStartTimeLocal.getTime())
+  // console.log('meshEndTimeMilliSec is', meshEndTimeLocal.getTime())
   Mesh.create({
     meshName: req.body.meshName,
-    meshDate: req.body.meshDate
+    meshCreatedAtTime: today.toString(),
+    meshStartTime: meshStartTimeLocal.toString(),
+    meshStartTimeMilliSec: meshStartTimeLocal.getTime(),
+    meshEndTime: meshEndTimeLocal.toString(),
+    meshEndTimeMilliSec: meshEndTimeLocal.getTime(),
+    meshCoordinate: req.body.meshCoordinate,
+    meshCreatedCoordinate: req.body.meshCreatedCoordinate,
+    meshTime: req.body.meshTime
   }, (err, data) => {
     if (err) throw err;
     console.log('new mesh created');
@@ -178,8 +208,13 @@ app.post('/api/mesh', (req, res) => {
 
 //route to retrieve meshes
 app.get('/api/meshes', (req, res) => {
-  console.log('sending all available meshes')
-  Mesh.find({},(err, data)=> {
+  var rightNow = new Date; 
+  var rightNowMilliSec = rightNow.getTime();
+  console.log('sending all ongoing meshes')
+  Mesh.find({
+    meshStartTimeMilliSec:{$lt: rightNowMilliSec},
+    meshEndTimeMilliSec:{$gt: rightNowMilliSec}
+  },(err, data)=> {
     res.json(data)
   })
 })

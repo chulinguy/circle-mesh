@@ -7,22 +7,29 @@ var MeshSchema = new Schema({
     unique: true,
     required: true
   },
-  meshDate: {
-    type: String
-  },
-  startDate: {
-    type: String
-  },
-  meshLocation: {
-    type: String
-  },
-  meshCreatedLocation: {
-    type: String
-  }, 
-  meshCreatedAt: {
+  meshCreatedAtTime: {
     type: String,
-    default: Date.now
   },
+  meshStartTime: {
+    type: String
+  },
+  meshStartTimeMilliSec: {
+    type: Number
+  },
+  meshEndTime: {
+    type: String
+  },
+  meshEndTimeMilliSec: {
+    type: Number
+  },
+  meshCoordinate: {
+    Lat: String,
+    Lng: String
+  },
+  meshCreatedCoordinate: {
+    Lat: String,
+    Lng: String
+  }, 
   peakParticipantNumber: {
     type: Number,
     default: 0

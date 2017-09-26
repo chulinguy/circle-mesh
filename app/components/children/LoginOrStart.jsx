@@ -86,7 +86,7 @@ class LoginOrStart extends React.Component {
                   {this.props.meshes.map(
                     function(mesh, i){
                       return(
-                        <div key={i} onClick={that.props.joinCurrentMesh.bind(that,mesh._id, mesh.meshName)}>
+                        <div key={i} onClick={that.props.joinCurrentMesh.bind(that,mesh._id, mesh.meshName, mesh.meshEndTimeMilliSec)}>
                           <p className="btn btn-success">Join {mesh.meshName}</p>
                         </div>
                       )
@@ -117,5 +117,4 @@ class LoginOrStart extends React.Component {
 export default LoginOrStart;
 
 //additional login page for redirecting / terms and condition checkbox;
-//Needs timer for meshes
 //

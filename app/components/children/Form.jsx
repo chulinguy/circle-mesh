@@ -1,6 +1,6 @@
 import React from "react";
 // import helpers from "../utils/helpers";
-import {Link, BrowserRouter} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 
 
@@ -10,7 +10,7 @@ class Form extends React.Component {
     this.state = {
       meshName: "",
       meshDate: "",
-      meshTime: '',
+      meshTime: '9 AM',
       meshDuration: 0,
       meshAddress: ''
     }
@@ -38,11 +38,21 @@ class Form extends React.Component {
     this.setState({meshDuration: event.target.value})
   }
 
+  meshAddressChangeHandler(event){
+    //NEED GOOGLE MAPS logic here
+    this.setState({meshAddress: event.target.value})
+  }
+
   submitHandler(event){
     event.preventDefault();
     var meshObj = {};
     meshObj.meshName = this.state.meshName;
     meshObj.meshDate = this.state.meshDate;
+    meshObj.meshDuration = this.state.meshDuration;
+    //TODO
+    meshObj.meshCoordinate = this.state.meshAddress;
+    meshObj.meshCreatedCoordinate = this.props.currentCoordinate;
+    meshObj.meshTime = this.state.meshTime;
     this.props.createMesh(meshObj);
   }
 
@@ -69,19 +79,19 @@ class Form extends React.Component {
               <div className="form-group col-sm-6 col-xs-6">
                 <label htmlFor="formGroupInput" className="meshInput">Start Time:</label>
                 <select value={this.state.meshTime} onChange={this.meshTimeChangeHandler}>
-                  <option value="9AM">9AM</option>
-                  <option value="10AM">10AM</option>
-                  <option value="11AM">11AM</option>
-                  <option value="12PM">12PM</option>
-                  <option value="1PM">1PM</option>
-                  <option value="2PM">2PM</option>
-                  <option value="3PM">3PM</option>
-                  <option value="4PM">4PM</option>
-                  <option value="5PM">5PM</option>
-                  <option value="6PM">6PM</option>
-                  <option value="7PM">7PM</option>
-                  <option value="8PM">8PM</option>
-                  <option value="9PM">9PM</option>
+                  <option value="9 AM">9 AM</option>
+                  <option value="10 AM">10 AM</option>
+                  <option value="11 AM">11 AM</option>
+                  <option value="12 PM">12 PM</option>
+                  <option value="1 PM">1 PM</option>
+                  <option value="2 PM">2 PM</option>
+                  <option value="3 PM">3 PM</option>
+                  <option value="4 PM">4 PM</option>
+                  <option value="5 PM">5 PM</option>
+                  <option value="6 PM">6 PM</option>
+                  <option value="7 PM">7 PM</option>
+                  <option value="8 PM">8 PM</option>
+                  <option value="9 PM">9 PM</option>
                 </select>
               </div>
             </div>

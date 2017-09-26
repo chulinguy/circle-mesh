@@ -56,7 +56,8 @@ var passport = function(passport) {
             // console.log('profile is')
             // console.log(profile)
             User.create({
-              'username' : profile.displayName,
+              'fullName' : profile.displayName,
+              'firstName': profile._json.firstName,
               'photo': profile.photos[0].value,
               'job': profile._json.headline,
               'linkedinURL': profile._json.siteStandardProfileRequest.url
