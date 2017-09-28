@@ -11,31 +11,33 @@ class LoginOrStart extends React.Component {
 
   componentDidMount(){
     var that = this; 
-    axios.get('/api/loggedin').then((logincheck) =>{
-      console.log('/api/loggedin returns')
-      console.log('tempID is ', logincheck.data.tempID)
-      that.props.updateLogin(logincheck)
-      //check database
-      axios.get(`/api/user/${logincheck.data.tempID}`).then((foundUserObj) => {
-        console.log('/api/user returns')
-        console.log('foundUserObj received', foundUserObj)
-        if(foundUserObj.data.user) {
-          console.log('react trying to update user')
-          that.props.updateUser(foundUserObj.data.user)
-        }
-        if (foundUserObj.data.needToRedirect){
-            axios.post(`/api/turnOffRedirect/${logincheck.data.tempID}`).then(()=>{
-              console.log('TURNING OFF REDIRECT')
-            })
-            console.log('REDIRECTING')
-            var redirectPath = foundUserObj.data.redirectAction; 
-            console.log(this.props.history)
-            history.replace({ pathname: `/${redirectPath}` })
-        //history.push
-        }
-        else that.render();
+    if (!this.props.username){
+      axios.get('/api/loggedin').then((logincheck) =>{
+        console.log('/api/loggedin returns')
+        console.log('tempID is ', logincheck.data.tempID)
+        that.props.updateLogin(logincheck)
+        //check database
+        axios.get(`/api/user/${logincheck.data.tempID}`).then((foundUserObj) => {
+          console.log('/api/user returns')
+          // console.log('foundUserObj received', foundUserObj)
+          if(foundUserObj.data.user) {
+            console.log('react trying to update user')
+            that.props.updateUser(foundUserObj.data.user)
+          }
+          if (foundUserObj.data.needToRedirect){
+              axios.post(`/api/turnOffRedirect/${logincheck.data.tempID}`).then(()=>{
+                console.log('TURNING OFF REDIRECT')
+              })
+              console.log('REDIRECTING')
+              var redirectPath = foundUserObj.data.redirectAction; 
+              console.log(this.props.history)
+              history.replace({ pathname: `/${redirectPath}` })
+          //history.push
+          }
+          else that.render();
+        })
       })
-    })
+    }
   }
 
   render(props) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import axios from 'axios';
 
 class Mesh extends React.Component {
   
@@ -7,37 +8,54 @@ class Mesh extends React.Component {
     super(props);
     this.state={
       timeLeftHours: 0,
-      timeLeftMinutes: 0
+      timeLeftMinutes: 0,
+      intervalFunc: {},
+      users:[]
     }
+    this.intervalFunc = this.intervalFunc.bind(this)
   }
     
-  componentDidMount(){ 
-    var that = this;  
-    var updateTimer = setInterval(intervalFunc, 3000)
-    intervalFunc();
-    function intervalFunc(){
-      var rightNow = new Date; 
-      if (rightNow.getTime() > that.props.meshEndTimeMilliSec){
-        alert("This Mesh Has Expired");
-      } else { 
-        // console.log('inside update timer')
-        var timeDiffInMinutes = (that.props.currentMeshEndTimeMilliSec - rightNow.getTime()) / 60000; 
-        var timeLeftHours = Math.floor(timeDiffInMinutes / 60);
-        var timeLeftMinutes = Math.floor(timeDiffInMinutes - (timeLeftHours * 60));
-        // console.log(timeLeftHours)
-        // console.log(timeLeftMinutes)
+  intervalFunc(){ 
+    var that = this;
+    var rightNow = new Date; 
+    if (rightNow.getTime() > this.props.meshEndTimeMilliSec){
+      alert("This Mesh Has Expired");
+    } else { 
+      // console.log('inside update timer')
+      var timeDiffInMinutes = (this.props.currentMeshEndTimeMilliSec - rightNow.getTime()) / 60000; 
+      var timeLeftHours = Math.floor(timeDiffInMinutes / 60);
+      var timeLeftMinutes = Math.floor(timeDiffInMinutes - (timeLeftHours * 60));
+      // console.log(timeLeftHours)
+      // console.log(timeLeftMinutes)
+      this.setState({
+        timeLeftHours: timeLeftHours,
+        timeLeftMinutes: timeLeftMinutes
+      })
+      axios.get(`/api/meshUsers/${this.props.currentMeshID}`).then((foundUsers)=>{
+        // console.log("foundUsers are");
+        // console.log(foundUsers);
         that.setState({
-          timeLeftHours: timeLeftHours,
-          timeLeftMinutes: timeLeftMinutes
+          users: foundUsers.data
         })
-      }
+      })
     }
-    
+  }
 
+  
 
+  componentDidMount(){ 
+    this.intervalFunc()
+    this.state.intervalFunc = setInterval(this.intervalFunc.bind(this), 15000);
+
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.state.intervalFunc);
   }
 
   componentDidUpdate(){
+    // console.log("this.state.users are")
+    // console.log(this.state.users)
     this.render();
   }
 
@@ -66,7 +84,26 @@ class Mesh extends React.Component {
           </div> 
           <br/><hr/><br/>
           <div id='others'>
-          
+            {
+              function(){
+                var filteredUsers = that.state.users.filter(v => (v.fullName !==that.props.userFullName) )
+                {/* console.log("filteredUsers are")
+                console.log(filteredUsers) */}
+                return filteredUsers.map((v, i) => {
+                    return (
+                      <div className="row other-users" id={v.fullName} key={i}>
+                        <div className="col-xs-6">
+                          <img src={v.photo} className='avatar-pic'/>
+                        </div>
+                        <div className="col-xs-6">
+                          <h6>{v.firstName}</h6>
+                          <h6>{v.job}</h6> 
+                        </div>
+                      </div> 
+                    )
+                })
+              }()
+            }
           </div>
           <Link to="/">
             <button className="btn btn-success">Back to homepage</button>

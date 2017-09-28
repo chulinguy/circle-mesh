@@ -43,6 +43,7 @@ var Mesh = require('./models/Mesh.js');
 if (process.env.MONGODB_URI || process.env.NODE_ENV === 'production') mongoose.connect(process.env.MONGODB_URI);
 else mongoose.connect("mongodb://localhost/meshDB");
 var db = mongoose.connection;
+console.log(mongoose.version)
 
 db.on('error', function(error) {
   console.log('Mongoose Error: ', error);
@@ -167,6 +168,37 @@ app.post('/api/turnOffRedirect/:tempID', (req, res) => {
   res.end();
 })
 
+//user joining a mesh
+app.post('/api/joinMesh/:meshID/', (req, res)=>{
+  console.log(`user trying to join mesh ${req.params.meshID}`)
+  Mesh.findByIdAndUpdate(req.params.meshID
+    ,{
+    $addToSet: {
+      users: req.session.passport.user
+    }
+  },(err, mesh) => {
+    if (err) throw err;
+    // console.log(mesh)
+    Mesh.findById(req.params.meshID).populate("users").lean().exec((err2, mesh2) => {
+      console.log(mesh2.users)
+      if (err2) throw err;
+      res.json(mesh2)
+    })
+
+  })
+})
+
+app.get('/api/meshUsers/:meshID', (req, res)=>{
+  console.log(`getting all otherusers in mesh ${req.params.meshID}`)
+  Mesh.find({_id: req.params.meshID}).populate("users").exec( (err,mesh)=>{
+    if (err) throw err;
+    // console.log(mesh)
+    if(mesh.length === 0){res.end()}
+    else {var filteredMeshUsers = mesh[0].users.filter((v)=>(v._id !==req.session.passport.user))
+    res.json(filteredMeshUsers)}
+  })
+})
+
 //route for user to create a mesh
 app.post('/api/mesh', (req, res) => {
   var today = new Date;
@@ -210,11 +242,26 @@ app.post('/api/mesh', (req, res) => {
 app.get('/api/meshes', (req, res) => {
   var rightNow = new Date; 
   var rightNowMilliSec = rightNow.getTime();
-  console.log('sending all ongoing meshes')
+  console.log(`sending ongoing meshes for user ${req.session.passport.user}`)
   Mesh.find({
     meshStartTimeMilliSec:{$lt: rightNowMilliSec},
     meshEndTimeMilliSec:{$gt: rightNowMilliSec}
-  },(err, data)=> {
+  }).exec((err, data)=> {
+    if (err) throw err; 
+    // console.log(data[0].users)
+    // var massagedData = data;
+    // massagedData.map((v1) => {
+    //   return v1.users.map((v) => {
+    //     return {
+    //       firstName: v.firstName,
+    //       photo: v.photo,
+    //       linkedinURL: v.linkedinURL,
+    //       job: v.job
+    //     }
+    //   })
+    // })
+    // console.log(massagedData[0].users)
+    // res.json(massagedData)
     res.json(data)
   })
 })

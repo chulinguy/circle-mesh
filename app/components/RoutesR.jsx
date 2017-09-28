@@ -16,6 +16,7 @@ class Routes extends React.Component {
       serverResponded: false,
       tempID: 0,
       username: '',
+      fullName: '',
       job: '',
       photo: '',
       meshes:[],
@@ -46,7 +47,8 @@ class Routes extends React.Component {
     that.setState({
       username: foundUser.firstName,
       photo: foundUser.photo,
-      job: foundUser.job
+      job: foundUser.job,
+      fullName: foundUser.fullName
     })
     console.log('updated routesR\'s user & mesh states');
     console.log('foundUser', foundUser.firstName)
@@ -62,22 +64,27 @@ class Routes extends React.Component {
   }
 
   joinCurrentMesh(meshID, meshName, meshEndTimeMilliSec){
+    var that = this;  
     this.setState({
       currentMeshID:meshID,
       currentMeshName: meshName, 
       currentMeshEndTimeMilliSec: meshEndTimeMilliSec
     });
+    axios.post(`/api/joinMesh/${meshID}`).then((data)=>{
+      console.log('database joining success')
+      history.push({ pathname: `/mesh/${meshID}` })
+
+    })
     //TODO: add this user to mesh via Mongoose
-    history.push({ pathname: `/mesh/${meshID}` })
   }
 
 
   getAllMeshes(){
     var that = this;  
     axios.get('/api/meshes').then((meshesObj)=>{
+        console.log('meshesObj.data is')
+        console.log(meshesObj.data)
       if (Object.keys(meshesObj.data).length){
-        // console.log('meshesObj.data is')
-        // console.log(meshesObj.data)
         that.setState({meshes: meshesObj.data})
       }
     })
@@ -89,7 +96,7 @@ class Routes extends React.Component {
 
   componentDidUpdate(prevProps, prevState){
     if (prevState.meshes.length !== this.state.meshes.length || this.state.meshes.length ===0 ){
-      console.log(this.state.meshes)
+      console.log('Meshes in state: ',this.state.meshes)
       this.getAllMeshes()
     }
     
@@ -124,6 +131,7 @@ class Routes extends React.Component {
           <Route path="/mesh" render={(props) => (
             <Mesh
               username={this.state.username}
+              userFullName={this.state.fullName}
               job={this.state.job}
               photo={this.state.photo}
               currentMeshID={this.state.currentMeshID}
