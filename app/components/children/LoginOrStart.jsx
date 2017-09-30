@@ -79,6 +79,32 @@ class LoginOrStart extends React.Component {
       })
     }
   }
+  
+    
+
+  // handleLocationError(browserHasGeolocation, infoWindow, pos) {
+  //     infoWindow.setPosition(pos);
+  //     infoWindow.setContent(browserHasGeolocation ?
+  //                           'Error: The Geolocation service failed.' :
+  //                           'Error: Your browser doesn\'t support geolocation.');
+  //     infoWindow.open(map);
+  //   }
+
+  geolocate(){
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var geolocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        var circle = new google.maps.Circle({
+          center: geolocation,
+          radius: position.coords.accuracy
+        });
+        autocomplete.setBounds(circle.getBounds());
+      });
+    }
+  }
 
   render(props) {
     var welcomeUser ='';
@@ -93,7 +119,7 @@ class LoginOrStart extends React.Component {
 
               <div className='panel'>
                 <div className='panel-heading'>
-                  <h5>Existing Meshes</h5>
+                  <h5>Nearby Active Meshes</h5>
                 </div>
                 <div className='panel-body'>
                   {
@@ -169,7 +195,7 @@ class LoginOrStart extends React.Component {
 
               <div className='panel'>
                 <div className='panel-heading'>
-                  <h5>Existing Meshes</h5>
+                  <h5>Nearby Active Meshes</h5>
                 </div>
                 <div className='panel-body'>
                   {this.props.meshes.map(

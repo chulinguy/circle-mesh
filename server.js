@@ -231,7 +231,9 @@ app.post('/api/mesh', (req, res) => {
     meshEndTimeMilliSec: meshEndTimeLocal.getTime(),
     meshCoordinate: req.body.meshCoordinate,
     meshCreatedCoordinate: req.body.meshCreatedCoordinate,
-    meshTime: req.body.meshTime
+    meshTime: req.body.meshTime,
+    meshCoordinate: req.body.meshCoordinate,
+    
   }, (err, data) => {
     if (err) throw err;
     console.log('new mesh created');

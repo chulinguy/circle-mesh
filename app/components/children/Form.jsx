@@ -13,6 +13,10 @@ class Form extends React.Component {
       meshTime: '9 AM',
       meshDuration: 0,
       meshAddress: ''
+      // meshCoordinate: {
+      //   lat: 0,
+      //   lng: 0
+      // }
     }
     this.meshDateChangeHandler = this.meshDateChangeHandler.bind(this);
     this.meshNameChangeHandler = this.meshNameChangeHandler.bind(this);
@@ -44,16 +48,36 @@ class Form extends React.Component {
   }
 
   submitHandler(event){
+    var that = this; 
     event.preventDefault();
-    var meshObj = {};
-    meshObj.meshName = this.state.meshName;
-    meshObj.meshDate = this.state.meshDate;
-    meshObj.meshDuration = this.state.meshDuration;
-    //TODO
-    meshObj.meshCoordinate = this.state.meshAddress;
-    meshObj.meshCreatedCoordinate = this.props.currentCoordinate;
-    meshObj.meshTime = this.state.meshTime;
-    this.props.createMesh(meshObj);
+    var geocoder = new google.maps.Geocoder();
+    console.log("trying to geocoder mesh location")
+    geocoder.geocode({ 'address': this.state.meshAddress}, function(results, status){
+      if (status == google.maps.GeocoderStatus.OK){
+        console.log(results[0]);
+        var lat = results[0].geometry.location.lat();
+        var lng = results[0].geometry.location.lng();
+        var meshObj = {};
+        meshObj.meshName = that.state.meshName;
+        meshObj.meshDate = that.state.meshDate;
+        meshObj.meshDuration = that.state.meshDuration;
+        meshObj.meshCoordinate = {
+          lat:lat,
+          lng: lng
+        };
+        
+        meshObj.meshCreatedCoordinate = that.props.currentCoordinate;
+        meshObj.meshTime = that.state.meshTime;
+        that.props.createMesh(meshObj);
+
+      } else {
+        alert("geocoder error")
+      }
+    })
+  }
+
+  geocorder(address){
+    
   }
 
   render () {

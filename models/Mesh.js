@@ -23,12 +23,12 @@ var MeshSchema = new Schema({
     type: Number
   },
   meshCoordinate: {
-    Lat: String,
-    Lng: String
+    lat: Number,
+    lng: Number
   },
   meshCreatedCoordinate: {
-    Lat: String,
-    Lng: String
+    lat: Number,
+    lng: Number
   }, 
   peakParticipantNumber: {
     type: Number,

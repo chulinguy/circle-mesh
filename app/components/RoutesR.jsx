@@ -24,7 +24,9 @@ class Routes extends React.Component {
       currentMeshID: '',
       currentMeshName: '',
       currentCoordinate: {lng: 0, lat: 0},
-      currentMeshEndTimeMilliSec: 0
+      currentMeshEndTimeMilliSec: 0,
+      userLat: 0,
+      userLng: 0
     }
     this.updateLogin = this.updateLogin.bind(this);
     this.updateUser = this.updateUser.bind(this);
@@ -84,20 +86,43 @@ class Routes extends React.Component {
     //TODO: add this user to mesh via Mongoose
   }
 
-
   getAllMeshes(){
     var that = this;  
     axios.get('/api/meshes').then((meshesObj)=>{
         console.log('meshesObj.data is')
         console.log(meshesObj.data)
       if (Object.keys(meshesObj.data).length){
-        that.setState({meshes: meshesObj.data})
+        var filteredMeshes = meshesObj.data.filter((v)=>{
+          var R = 6371e3; 
+          var lat1 =  v.meshCoordinate.lat;
+          var lon1 =  v.meshCoordinate.lng;
+          var lat2 = that.state.userLat;
+          var lon2 = that.state.userLng;
+          var φ1 = (lat1)/180*Math.PI;
+          var φ2 = (lat2)/180*Math.PI;
+          var Δφ = (lat2-lat1)/180*Math.PI;
+          var Δλ = (lon2-lon1)/180*Math.PI;
+
+          var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                  Math.cos(φ1) * Math.cos(φ2) *
+                  Math.sin(Δλ/2) * Math.sin(Δλ/2);
+          var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+          var d = R * c;
+          return d <500;
+        })
+        that.setState({meshes: filteredMeshes})
       }
     })
   }
   componentDidMount(){
     var that = this; 
-    setInterval(that.getAllMeshes,60000)
+    this.googleInit();
+    setInterval(function(){
+      that.getAllMeshes();
+      that.googleInit();
+    },60000)
+
   }
 
   componentDidUpdate(prevProps, prevState){
@@ -107,6 +132,25 @@ class Routes extends React.Component {
     }
     
   }
+
+  googleInit(){
+    var that = this;  
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          console.log("lat is", pos.lat)
+          console.log("lng is", pos.lng)
+          that.setState({
+            userLat: pos.lat,
+            userLng: pos.lng
+          })
+        })
+    }
+  }
+
   render(){
     var that = this;  
     return (
