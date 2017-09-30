@@ -2,11 +2,46 @@ import React from "react";
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import history from '../../history.js';
+import { Button, Modal } from 'react-bootstrap';
 
 class LoginOrStart extends React.Component {
   constructor(props){
     super(props);
-    
+    this.state = {
+      showModal1: false,
+      showModal2 : false,
+      redirectMeshID: "",
+      redirectMeshName: "",
+      redirectMeshEndTimeMilliSec: ""
+
+    }
+    this.close1 = this.close1.bind(this);
+    this.open1 = this.open1.bind(this);
+    this.close2 = this.close2.bind(this);
+    this.open1 = this.open1.bind(this);
+  }
+
+  close1() {
+    this.setState({ showModal1: false });
+  }
+
+  open1() {
+    this.setState({ showModal1: true });
+  } 
+  close2() {
+    this.setState({ showModal2: false });
+  }
+
+  open2() {
+    this.setState({ showModal2: true });
+  } 
+
+  redirectClickHandler (meshID, meshName, meshEndTimeMilliSec){
+    this.setState({
+      redirectMeshID: meshID,
+      redirectMeshName: meshName,
+      redirectMeshEndTimeMilliSec: meshEndTimeMilliSec
+    })
   }
 
   componentDidMount(){
@@ -64,16 +99,63 @@ class LoginOrStart extends React.Component {
                   {this.props.meshes.map(
                     function(mesh, i){
                       return(
-                        <a key={i} href={`auth/linkedin/mesh/${that.props.tempID}/${mesh._id}/${mesh.meshName}/${mesh.meshEndTimeMilliSec}`} className="btn btn-success">Join {mesh.meshName}</a>
+                        <Button
+                          bsStyle="primary"
+                          bsSize="large"
+                          onClick={this.open2}
+                          key={i}
+                        >
+                         Join Mesh {mesh.meshName}(login)
+                        </Button>
                       )
                     })
                   }
+                <Modal show={this.state.showModal2} onHide={this.close2}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Terms and Agreement</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  Some terms and agreement
+                  </Modal.Body>
+                <Modal.Footer>
+                  <a 
+                  key={i} 
+                  href={`auth/linkedin/mesh/${this.props.tempID}/${this.state.redirectMeshID}/${this.state.redirectMeshName}/${this.state.redirectMeshEndTimeMilliSec}`} 
+                  className="btn btn-success">
+                    Agree {mesh.meshName}
+                  </a>
+                </Modal.Footer>
+              </Modal>
+
                 </div>
               </div>
 
               <h4 className="card-text">Log in with Linkedin</h4>
               <br/>
-              <a href={`auth/linkedin/create/${this.props.tempID}`} className="btn btn-primary">Login(create mesh)</a>
+              
+              <Button
+                bsStyle="primary"
+                bsSize="large"
+                onClick={this.open}
+              >
+                Create Mesh (login)
+              </Button>
+              
+              <Modal show={this.state.showModal1} onHide={this.close1}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Terms and Agreement</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  Some terms and agreement
+                  </Modal.Body>
+                <Modal.Footer>
+                  <a 
+                  href={`auth/linkedin/create/${this.props.tempID}`} 
+                  className="btn btn-primary">
+                    Agree
+                  </a>
+                </Modal.Footer>
+              </Modal>
           </div>
         </div>
       )

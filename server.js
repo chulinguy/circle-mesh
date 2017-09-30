@@ -112,12 +112,10 @@ app.get('/api/user/:tempID',(req, res) => {
     var parsedTempID = parseInt(req.params.tempID);
     if (parsedTempID > 0){
       console.log('parsedtempID is', parsedTempID)
-      var tempUserRedirectStatus = tempUsersArr[parsedTempID].needToRedirect;
-      var tempUserRedirectAction = tempUsersArr[parsedTempID].action;
-      // console.log("tempUserRedirect Status is ")
-      // console.log(tempUserRedirectStatus)
-      userObj.needToRedirect = tempUserRedirectStatus;
-      userObj.redirectAction = tempUserRedirectAction;
+      userObj.needToRedirect = tempUsersArr[parsedTempID].needToRedirect;
+      userObj.redirectAction = tempUsersArr[parsedTempID].action;
+      userObj.meshName = tempUsersArr[parsedTempID].meshName;
+      userObj.meshEndTimeMilliSec = tempUsersArr[parsedTempID].meshEndTimeMilliSec;
       // console.log("tempUserArr is")
       // console.log(tempUsersArr)
     }

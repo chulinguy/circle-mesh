@@ -67,6 +67,10 @@ class Routes extends React.Component {
 
   joinCurrentMesh(meshID, meshName, meshEndTimeMilliSec){
     var that = this;  
+    console.log('trying to join mesh')
+    console.log("currentMeshID is", meshID)
+    console.log("currentMeshName is", meshName)
+    console.log("currentMeshEndTimeMilliSec is", meshEndTimeMilliSec)
     this.setState({
       currentMeshID:meshID,
       currentMeshName: meshName, 

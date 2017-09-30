@@ -18,7 +18,7 @@ class Mesh extends React.Component {
   intervalFunc(){ 
     var that = this;
     var rightNow = new Date; 
-    if (rightNow.getTime() > this.props.meshEndTimeMilliSec){
+    if (rightNow.getTime() > this.props.currentMeshEndTimeMilliSec){
       alert("This Mesh Has Expired");
     } else { 
       // console.log('inside update timer')
@@ -74,13 +74,8 @@ class Mesh extends React.Component {
               }()
           }</h2>
           <div className="row" id="yourself">
-            <div className="col-xs-4">
+            <div className="col-xs-6">
               <img src={this.props.photo} className='avatar-pic'/>
-            </div>
-            <div className="col-xs-2">
-              <a href={this.props.linkedinURL} target="_blank">
-                <img src="/assets/images/Linkedin.png" className='linkedin-pic img img-responsive'/>
-              </a> 
             </div>
             <div className="col-xs-6">
               <h6>{this.props.username}</h6>
@@ -94,8 +89,13 @@ class Mesh extends React.Component {
                   .map((v, i) => {
                     return (
                       <div className="row other-users" id={v.fullName} key={i}>
-                        <div className="col-xs-6">
+                        <div className="col-xs-4">
                           <img src={v.photo} className='avatar-pic'/>
+                        </div>
+                        <div className="col-xs-2">
+                          <a href={this.props.linkedinURL} target="_blank">
+                            <img src="/assets/images/Linkedin.png" className='linkedin-pic img img-responsive'/>
+                          </a> 
                         </div>
                         <div className="col-xs-6">
                           <h6>{v.firstName}</h6>
