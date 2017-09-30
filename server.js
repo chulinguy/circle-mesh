@@ -70,6 +70,7 @@ app.get('/auth/linkedin/create/:tempID', function(req, res, next){
 );
 
 app.get('/auth/linkedin/mesh/:tempID/:meshID/:meshName/:meshEndTimeMilliSec', function(req,res,next){
+  console.log('CHANGING NEED TO REDIRECT');
   var parsedTempID = parseInt(req.params.tempID);
   tempUsersArr[parsedTempID].needToRedirect = true;
   tempUsersArr[parsedTempID].action = `mesh/${req.params.meshID}`;

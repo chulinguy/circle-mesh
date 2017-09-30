@@ -18,7 +18,7 @@ class LoginOrStart extends React.Component {
     this.close1 = this.close1.bind(this);
     this.open1 = this.open1.bind(this);
     this.close2 = this.close2.bind(this);
-    this.open1 = this.open1.bind(this);
+    this.open2 = this.open2.bind(this);
   }
 
   close1() {
@@ -32,17 +32,15 @@ class LoginOrStart extends React.Component {
     this.setState({ showModal2: false });
   }
 
-  open2() {
-    this.setState({ showModal2: true });
-  } 
-
-  redirectClickHandler (meshID, meshName, meshEndTimeMilliSec){
-    this.setState({
+  open2(meshID, meshName, meshEndTimeMilliSec) {
+    this.setState({ 
+      showModal2: true,
       redirectMeshID: meshID,
       redirectMeshName: meshName,
       redirectMeshEndTimeMilliSec: meshEndTimeMilliSec
     })
-  }
+  } 
+
 
   componentDidMount(){
     var that = this; 
@@ -55,6 +53,9 @@ class LoginOrStart extends React.Component {
         axios.get(`/api/user/${logincheck.data.tempID}`).then((foundUserObj) => {
           console.log('/api/user returns')
           // console.log('foundUserObj received', foundUserObj)
+          var redirectPath = foundUserObj.data.redirectAction; 
+          console.log('redirect path is')
+          console.log(redirectPath)
           if(foundUserObj.data.user) {
             console.log('react trying to update user')
             that.props.updateUser(foundUserObj.data.user)
@@ -63,7 +64,6 @@ class LoginOrStart extends React.Component {
               axios.post(`/api/turnOffRedirect/${logincheck.data.tempID}`).then(()=>{
                 console.log('TURNING OFF REDIRECT')
               })
-              var redirectPath = foundUserObj.data.redirectAction; 
               // console.log(this.props.history)
               if (redirectPath !== 'form'){
                 var meshRedirectName = foundUserObj.data.meshName;
@@ -96,13 +96,14 @@ class LoginOrStart extends React.Component {
                   <h5>Existing Meshes</h5>
                 </div>
                 <div className='panel-body'>
-                  {this.props.meshes.map(
+                  {
+                    this.props.meshes.map(
                     function(mesh, i){
                       return(
                         <Button
                           bsStyle="primary"
                           bsSize="large"
-                          onClick={this.open2}
+                          onClick={that.open2.bind(that, mesh._id, mesh.meshName, mesh.meshEndTimeMilliSec)}
                           key={i}
                         >
                          Join Mesh {mesh.meshName}(login)
@@ -119,10 +120,9 @@ class LoginOrStart extends React.Component {
                   </Modal.Body>
                 <Modal.Footer>
                   <a 
-                  key={i} 
                   href={`auth/linkedin/mesh/${this.props.tempID}/${this.state.redirectMeshID}/${this.state.redirectMeshName}/${this.state.redirectMeshEndTimeMilliSec}`} 
                   className="btn btn-success">
-                    Agree {mesh.meshName}
+                    Agree
                   </a>
                 </Modal.Footer>
               </Modal>
@@ -136,7 +136,7 @@ class LoginOrStart extends React.Component {
               <Button
                 bsStyle="primary"
                 bsSize="large"
-                onClick={this.open}
+                onClick={this.open1}
               >
                 Create Mesh (login)
               </Button>
