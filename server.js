@@ -59,7 +59,6 @@ db.once('open', function() {
 app.get('/auth/linkedin/create/:tempID', function(req, res, next){
   console.log('CHANGING NEED TO REDIRECT');
   var parsedTempID = parseInt(req.params.tempID);
-  // console.log('I am a number?', parsedTempID)
   tempUsersArr[parsedTempID].needToRedirect = true;
   tempUsersArr[parsedTempID].action = "form";
   tempIDTracker = parsedTempID;
@@ -70,11 +69,12 @@ app.get('/auth/linkedin/create/:tempID', function(req, res, next){
   passport.authenticate('linkedin')    
 );
 
-app.get('/auth/linkedin/mesh/:tempID/:meshID', function(req,res,next){
+app.get('/auth/linkedin/mesh/:tempID/:meshID/:meshName/:meshEndTimeMilliSec', function(req,res,next){
   var parsedTempID = parseInt(req.params.tempID);
-  // console.log('I am a number?', parsedTempID)
   tempUsersArr[parsedTempID].needToRedirect = true;
-  tempUsersArr[parsedTempID].action = `mesh/${parsedTempID}`;
+  tempUsersArr[parsedTempID].action = `mesh/${req.params.meshID}`;
+  tempUsersArr[parsedTempID].meshName = req.params.meshName;
+  tempUsersArr[parsedTempID].meshEndTimeMilliSec = req.params.meshEndTimeMilliSec;
   tempIDTracker = parsedTempID;
   next();
 },
@@ -132,7 +132,9 @@ for (var i = 1; i< 200; i++){
     tempID: i,
     needToRedirect: false,
     action: '',
-    passportID: ''
+    passportID: '',
+    meshName: '',
+    meshEndTimeMilliSec: ''
   }
 }
 

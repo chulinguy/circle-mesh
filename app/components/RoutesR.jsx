@@ -19,6 +19,7 @@ class Routes extends React.Component {
       fullName: '',
       job: '',
       photo: '',
+      linkedinURL: '',  
       meshes:[],
       currentMeshID: '',
       currentMeshName: '',
@@ -48,7 +49,8 @@ class Routes extends React.Component {
       username: foundUser.firstName,
       photo: foundUser.photo,
       job: foundUser.job,
-      fullName: foundUser.fullName
+      fullName: foundUser.fullName,
+      linkedinURL: foundUser.linkedinURL
     })
     console.log('updated routesR\'s user & mesh states');
     console.log('foundUser', foundUser.firstName)
@@ -134,6 +136,7 @@ class Routes extends React.Component {
               userFullName={this.state.fullName}
               job={this.state.job}
               photo={this.state.photo}
+              linkedinURL={this.state.linkedinURL}
               currentMeshID={this.state.currentMeshID}
               currentMeshName={this.state.currentMeshName}
               currentMeshEndTimeMilliSec={this.state.currentMeshEndTimeMilliSec}

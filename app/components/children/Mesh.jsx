@@ -32,8 +32,8 @@ class Mesh extends React.Component {
         timeLeftMinutes: timeLeftMinutes
       })
       axios.get(`/api/meshUsers/${this.props.currentMeshID}`).then((foundUsers)=>{
-        // console.log("foundUsers are");
-        // console.log(foundUsers);
+        console.log("foundUsers are");
+        console.log(foundUsers);
         that.setState({
           users: foundUsers.data
         })
@@ -74,8 +74,13 @@ class Mesh extends React.Component {
               }()
           }</h2>
           <div className="row" id="yourself">
-            <div className="col-xs-6">
+            <div className="col-xs-4">
               <img src={this.props.photo} className='avatar-pic'/>
+            </div>
+            <div className="col-xs-2">
+              <a href={this.props.linkedinURL} target="_blank">
+                <img src="/assets/images/Linkedin.png" className='linkedin-pic img img-responsive'/>
+              </a> 
             </div>
             <div className="col-xs-6">
               <h6>{this.props.username}</h6>
@@ -85,11 +90,8 @@ class Mesh extends React.Component {
           <br/><hr/><br/>
           <div id='others'>
             {
-              function(){
-                var filteredUsers = that.state.users.filter(v => (v.fullName !==that.props.userFullName) )
-                {/* console.log("filteredUsers are")
-                console.log(filteredUsers) */}
-                return filteredUsers.map((v, i) => {
+                this.state.users.filter(v => (v.fullName !==that.props.userFullName))
+                  .map((v, i) => {
                     return (
                       <div className="row other-users" id={v.fullName} key={i}>
                         <div className="col-xs-6">
@@ -102,7 +104,6 @@ class Mesh extends React.Component {
                       </div> 
                     )
                 })
-              }()
             }
           </div>
           <Link to="/">

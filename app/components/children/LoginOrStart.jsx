@@ -28,9 +28,14 @@ class LoginOrStart extends React.Component {
               axios.post(`/api/turnOffRedirect/${logincheck.data.tempID}`).then(()=>{
                 console.log('TURNING OFF REDIRECT')
               })
-              console.log('REDIRECTING')
               var redirectPath = foundUserObj.data.redirectAction; 
-              console.log(this.props.history)
+              // console.log(this.props.history)
+              if (redirectPath !== 'form'){
+                var meshRedirectName = foundUserObj.data.meshName;
+                var meshRedirectEndTime = foundUserObj.data.meshEndTimeMilliSec;
+                that.props.joinCurrentMesh(redirectPath.slice(5), meshRedirectName, meshRedirectEndTime);
+              }
+              console.log('REDIRECTING')
               history.replace({ pathname: `/${redirectPath}` })
           //history.push
           }
@@ -59,7 +64,7 @@ class LoginOrStart extends React.Component {
                   {this.props.meshes.map(
                     function(mesh, i){
                       return(
-                        <a key={i} href={`auth/linkedin/mesh/${that.props.tempID}/${mesh._id}`} className="btn btn-success">Join {mesh.meshName}</a>
+                        <a key={i} href={`auth/linkedin/mesh/${that.props.tempID}/${mesh._id}/${mesh.meshName}/${mesh.meshEndTimeMilliSec}`} className="btn btn-success">Join {mesh.meshName}</a>
                       )
                     })
                   }
