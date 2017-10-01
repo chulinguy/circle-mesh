@@ -3,14 +3,14 @@ var User = require('../models/User.js');
 
 var passport = function(passport) {
 	passport.serializeUser(function(user, done){
-    console.log('serializeUser is being called!')
+    // console.log('serializeUser is being called!')
     // console.log('user obj is')
     // console.log(user)
     done(null, user.id);
 	});
 
   passport.deserializeUser(function(id, done){
-    console.log('deserializeUser is being called!')
+    // console.log('deserializeUser is being called!')
     User.findById(id, function(err, user){
 			done(null, user);
 		});
@@ -39,11 +39,11 @@ var passport = function(passport) {
       // console.log("refresh", refreshToken)
       // console.log("profile is", profile)
       process.nextTick(function(){
-        console.log('trying to find user')
+        // console.log('trying to find user')
         // console.log(`profile displayname is ${profile.displayName}`)
         User.findOne({'username': profile.displayName}, function(err, user){
           if(user){
-            console.log('user found!')
+            console.log('user already in database!')
             // console.log(user);
             // user.accessToken = accessToken;
             // user.refreshToken = refreshToken
@@ -52,7 +52,7 @@ var passport = function(passport) {
             return done(null, user);
           }
           else {
-            console.log('creating a new user');
+            console.log('creating a new user in database!');
             // console.log('profile is')
             // console.log(profile)
             User.create({

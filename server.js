@@ -101,9 +101,14 @@ app.get('/auth/linkedin', passport.authenticate('linkedin'));
 //for this user, get whole user obj
 app.get('/api/user/:tempID',(req, res) => {
   var userToFind = '';  
-  console.log('req session is')
-  console.log(req.session)
-  if (req.session.passport) userToFind = req.session.passport.user;
+  // console.log('req session is');
+  // console.log(req.session);
+  if (req.session.passport) {
+    userToFind = req.session.passport.user;
+    console.log(`retrieving database User ${userToFind}`)
+  } else {
+    console.log(`Database doesn't have data for temp user ${req.params.tempID}`)
+  }
   User.findById(userToFind, (err, foundUser) => {
     // console.log('foundUser', foundUser);
     var userObj = {};
@@ -112,7 +117,7 @@ app.get('/api/user/:tempID',(req, res) => {
     // console.log(userObj)
     var parsedTempID = parseInt(req.params.tempID);
     if (parsedTempID > 0){
-      console.log('parsedtempID is', parsedTempID)
+      // console.log('parsedtempID is', parsedTempID)
       userObj.needToRedirect = tempUsersArr[parsedTempID].needToRedirect;
       userObj.redirectAction = tempUsersArr[parsedTempID].action;
       userObj.meshName = tempUsersArr[parsedTempID].meshName;
@@ -120,13 +125,14 @@ app.get('/api/user/:tempID',(req, res) => {
       // console.log("tempUserArr is")
       // console.log(tempUsersArr)
     }
+    
     res.json(userObj);
   })
 
 })
 
 var tempUsersArr = [];  
-for (var i = 1; i< 200; i++){
+for (var i = 1; i< 201; i++){
   tempUsersArr[i]={
     tempID: i,
     needToRedirect: false,
@@ -152,6 +158,7 @@ app.get("/api/loggedin", (req, res) => {
     } else var sentTempID = 0; 
   } else {
     tempCounter ++;
+    if (tempCounter === 200) tempCounter = 1; 
     var sentTempID = tempCounter;
   }  
   res.json({
@@ -161,7 +168,7 @@ app.get("/api/loggedin", (req, res) => {
 })
 
 app.post('/api/turnOffRedirect/:tempID', (req, res) => {
-  console.log('trying to turn off redirect')
+  console.log(`trying to turn off redirect for temp user ${req.params.tempID}`)
   var found = tempUsersArr.filter((v)=>(v.passportID===req.session.passport.user))[0];
   found.needToRedirect = false; 
   // console.log("tempUserArr is")
@@ -181,7 +188,7 @@ app.post('/api/joinMesh/:meshID/', (req, res)=>{
     if (err) throw err;
     // console.log(mesh)
     Mesh.findById(req.params.meshID).populate("users").lean().exec((err2, mesh2) => {
-      console.log(mesh2.users)
+      // console.log(mesh2.users)
       if (err2) throw err;
       res.json(mesh2)
     })
@@ -190,20 +197,22 @@ app.post('/api/joinMesh/:meshID/', (req, res)=>{
 })
 
 app.get('/api/meshUsers/:meshID', (req, res)=>{
-  console.log(`getting all otherusers in mesh ${req.params.meshID}`)
+  console.log(`getting all other users in mesh ${req.params.meshID}`)
   Mesh.find({_id: req.params.meshID}).populate("users").exec( (err,mesh)=>{
     if (err) throw err;
     // console.log(mesh)
     if(mesh.length === 0){res.end()}
     else {var filteredMeshUsers = mesh[0].users.filter((v)=>(v._id !==req.session.passport.user))
     res.json(filteredMeshUsers)}
+    console.log(`sending all other users in mesh ${req.params.meshID} to user ${req.session.passport.user}`)
   })
 })
 
 //route for user to create a mesh
 app.post('/api/mesh', (req, res) => {
   var today = new Date;
-  console.log('REQ.BODY of mesh post', req.body);
+  console.log(`User ${req.session.passport.user} is trying to create a new mesh`)
+  // console.log('REQ.BODY of mesh post', req.body);
   var convertedLocalDateArr = req.body.meshDate.split("-");
   convertedLocalDateArr [1] = parseInt(convertedLocalDateArr [1]) - 1 ; 
   if (req.body.meshTime.slice(-2) === 'AM'){
@@ -251,20 +260,6 @@ app.get('/api/meshes', (req, res) => {
     meshEndTimeMilliSec:{$gt: rightNowMilliSec}
   }).exec((err, data)=> {
     if (err) throw err; 
-    // console.log(data[0].users)
-    // var massagedData = data;
-    // massagedData.map((v1) => {
-    //   return v1.users.map((v) => {
-    //     return {
-    //       firstName: v.firstName,
-    //       photo: v.photo,
-    //       linkedinURL: v.linkedinURL,
-    //       job: v.job
-    //     }
-    //   })
-    // })
-    // console.log(massagedData[0].users)
-    // res.json(massagedData)
     res.json(data)
   })
 })
@@ -276,7 +271,6 @@ app.get('*', function (request, response){
 })
 
 //================================
-
 
 app.listen(port, function() {
   console.log(`Server is running on port ${port}`);

@@ -62,25 +62,25 @@ class Routes extends React.Component {
   createMesh(meshObj){
     var that = this;  
     axios.post('/api/mesh', meshObj).then((data)=>{
-      console.log('created a new mesh')
+      console.log('created a new mesh');
       that.getAllMeshes();
     })
   }
 
   joinCurrentMesh(meshID, meshName, meshEndTimeMilliSec){
     var that = this;  
-    console.log('trying to join mesh')
-    console.log("currentMeshID is", meshID)
-    console.log("currentMeshName is", meshName)
-    console.log("currentMeshEndTimeMilliSec is", meshEndTimeMilliSec)
+    console.log('trying to join mesh');
+    console.log("currentMeshID is", meshID);
+    console.log("currentMeshName is", meshName);
+    console.log("currentMeshEndTimeMilliSec is", meshEndTimeMilliSec);
     this.setState({
       currentMeshID:meshID,
       currentMeshName: meshName, 
       currentMeshEndTimeMilliSec: meshEndTimeMilliSec
     });
     axios.post(`/api/joinMesh/${meshID}`).then((data)=>{
-      console.log('database joining success')
-      history.push({ pathname: `/mesh/${meshID}` })
+      console.log('database joining success');
+      history.push({ pathname: `/mesh/${meshID}` });
 
     })
     //TODO: add this user to mesh via Mongoose
@@ -89,8 +89,8 @@ class Routes extends React.Component {
   getAllMeshes(){
     var that = this;  
     axios.get('/api/meshes').then((meshesObj)=>{
-        console.log('meshesObj.data is')
-        console.log(meshesObj.data)
+        console.log('meshesObj.data is');
+        console.log(meshesObj.data);
       if (Object.keys(meshesObj.data).length){
         var filteredMeshes = meshesObj.data.filter((v)=>{
           var R = 6371e3; 
@@ -109,9 +109,9 @@ class Routes extends React.Component {
           var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
           var d = R * c;
-          return d <500;
-        })
-        that.setState({meshes: filteredMeshes})
+          return d <32000;
+        });
+        that.setState({meshes: filteredMeshes});
       }
     })
   }
@@ -119,16 +119,18 @@ class Routes extends React.Component {
     var that = this; 
     this.googleInit();
     setInterval(function(){
-      that.getAllMeshes();
       that.googleInit();
-    },60000)
+    },60000);
+    setInterval(function(){
+      that.getAllMeshes();
+    },5000);
 
   }
 
   componentDidUpdate(prevProps, prevState){
     if (prevState.meshes.length !== this.state.meshes.length || this.state.meshes.length ===0 ){
       console.log('Meshes in state: ',this.state.meshes)
-      this.getAllMeshes()
+      this.getAllMeshes();
     }
     
   }
@@ -141,8 +143,8 @@ class Routes extends React.Component {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
-          console.log("lat is", pos.lat)
-          console.log("lng is", pos.lng)
+          console.log("lat is", pos.lat);
+          console.log("lng is", pos.lng);
           that.setState({
             userLat: pos.lat,
             userLng: pos.lng

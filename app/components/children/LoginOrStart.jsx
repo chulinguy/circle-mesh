@@ -41,7 +41,6 @@ class LoginOrStart extends React.Component {
     })
   } 
 
-
   componentDidMount(){
     var that = this; 
     if (!this.props.username){
@@ -80,16 +79,6 @@ class LoginOrStart extends React.Component {
     }
   }
   
-    
-
-  // handleLocationError(browserHasGeolocation, infoWindow, pos) {
-  //     infoWindow.setPosition(pos);
-  //     infoWindow.setContent(browserHasGeolocation ?
-  //                           'Error: The Geolocation service failed.' :
-  //                           'Error: Your browser doesn\'t support geolocation.');
-  //     infoWindow.open(map);
-  //   }
-
   geolocate(){
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -230,6 +219,3 @@ class LoginOrStart extends React.Component {
 }
 
 export default LoginOrStart;
-
-//additional login page for redirecting / terms and condition checkbox;
-//

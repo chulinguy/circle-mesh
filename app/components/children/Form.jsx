@@ -2,8 +2,6 @@ import React from "react";
 // import helpers from "../utils/helpers";
 import {Link} from 'react-router-dom';
 
-
-
 class Form extends React.Component {
   constructor(props){
     super(props);
@@ -13,10 +11,6 @@ class Form extends React.Component {
       meshTime: '9 AM',
       meshDuration: 0,
       meshAddress: ''
-      // meshCoordinate: {
-      //   lat: 0,
-      //   lng: 0
-      // }
     }
     this.meshDateChangeHandler = this.meshDateChangeHandler.bind(this);
     this.meshNameChangeHandler = this.meshNameChangeHandler.bind(this);
@@ -27,24 +21,23 @@ class Form extends React.Component {
   };
 
   meshNameChangeHandler(event){
-    this.setState({meshName: event.target.value})
+    this.setState({meshName: event.target.value});
   }
 
   meshDateChangeHandler(event){
-    this.setState({meshDate: event.target.value})
+    this.setState({meshDate: event.target.value});
   }
 
   meshTimeChangeHandler(event){
-    this.setState({meshTime: event.target.value})
+    this.setState({meshTime: event.target.value});
   }
 
   meshDurationChangeHandler(event){
-    this.setState({meshDuration: event.target.value})
+    this.setState({meshDuration: event.target.value});
   }
 
   meshAddressChangeHandler(event){
-    //NEED GOOGLE MAPS logic here
-    this.setState({meshAddress: event.target.value})
+    this.setState({meshAddress: event.target.value});
   }
 
   submitHandler(event){
@@ -74,10 +67,6 @@ class Form extends React.Component {
         alert("geocoder error")
       }
     })
-  }
-
-  geocorder(address){
-    
   }
 
   render () {
