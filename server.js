@@ -254,7 +254,9 @@ app.post('/api/mesh', (req, res) => {
 app.get('/api/meshes', (req, res) => {
   var rightNow = new Date; 
   var rightNowMilliSec = rightNow.getTime();
-  console.log(`sending ongoing meshes for user ${req.session.passport.user}`)
+  if (req.session.passport){
+    console.log(`sending ongoing meshes for user ${req.session.passport.user}`)
+  }
   Mesh.find({
     meshStartTimeMilliSec:{$lt: rightNowMilliSec},
     meshEndTimeMilliSec:{$gt: rightNowMilliSec}
