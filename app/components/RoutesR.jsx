@@ -91,8 +91,8 @@ class Routes extends React.Component {
   getAllMeshes(){
     var that = this;  
     axios.get('/api/meshes').then((meshesObj)=>{
-        // console.log('meshesObj.data is');
-        // console.log(meshesObj.data);
+        console.log('meshesObj.data is');
+        console.log(meshesObj.data);
       if (Object.keys(meshesObj.data).length){
         var filteredMeshes = meshesObj.data.filter((v)=>{
           var R = 6371e3; 
@@ -113,8 +113,7 @@ class Routes extends React.Component {
           var d = R * c;
           return d <32000;
         });
-        console.log("filteredMeshes are")
-        console.log(filteredMeshes)
+        console.log("filteredMeshes are",filteredMeshes)
         that.setState({meshes: filteredMeshes});
       }
     })
@@ -137,7 +136,7 @@ class Routes extends React.Component {
 
     setInterval(function(){
       that.googleInit();
-    },20000);
+    },60000);
     setInterval(function(){
       that.getAllMeshes();
     },5000);
@@ -168,7 +167,7 @@ class Routes extends React.Component {
               radius: position.coords.accuracy
             });
             if (that.state.autocomplete){
-              console.log('setting bounds')
+              // console.log('setting bounds')
               that.state.autocomplete.setBounds(circle.getBounds())
             }
         })
@@ -202,6 +201,7 @@ class Routes extends React.Component {
               createMesh={this.createMesh}
               currentCoordinate={this.state.currentCoordinate}
               setAutocomplete={this.setAutocomplete}
+              autocomplete={this.state.autocomplete}
             />
           )}/>      
 

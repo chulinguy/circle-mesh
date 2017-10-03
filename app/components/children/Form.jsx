@@ -1,8 +1,7 @@
 import React from "react";
 // import helpers from "../utils/helpers";
 import {Link} from 'react-router-dom';
-import Moment from 'react-moment';
-import 'moment-timezone';
+import Geosuggest from 'react-geosuggest'
 
 class Form extends React.Component {
   constructor(props){
@@ -81,11 +80,16 @@ class Form extends React.Component {
   }
 
   componentDidMount(){
+    var that = this;  
     var newAutocomplete = new google.maps.places.Autocomplete((document.getElementById('meshAddress')),
       {types: ['geocode']});
-      console.log("newAutocomplete is")
-      console.log(newAutocomplete)
+      // console.log("newAutocomplete is")
+      // console.log(newAutocomplete)
     this.props.setAutocomplete(newAutocomplete);
+    google.maps.event.addListener(newAutocomplete, 'place_changed',() => {
+      // console.log(newAutocomplete.gm_accessors_.place.Fc.formattedPrediction)
+      that.setState({meshAddress: newAutocomplete.gm_accessors_.place.Fc.formattedPrediction});
+    })
   }
 
   render () {

@@ -1,2 +1,3 @@
 
-3) Auto complete
+1) Auto complete only works locally
+2) Still not seeing meshes on deployed!? 
