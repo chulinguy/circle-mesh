@@ -26,13 +26,15 @@ class Routes extends React.Component {
       currentCoordinate: {lng: 0, lat: 0},
       currentMeshEndTimeMilliSec: 0,
       userLat: 0,
-      userLng: 0
+      userLng: 0,
+      autocomplete: null
     }
     this.updateLogin = this.updateLogin.bind(this);
     this.updateUser = this.updateUser.bind(this);
     this.createMesh = this.createMesh.bind(this);
     this.joinCurrentMesh = this.joinCurrentMesh.bind(this);
     this.getAllMeshes = this.getAllMeshes.bind(this);
+    this.setAutocomplete = this.setAutocomplete.bind(this);
   }
 
   updateLogin(logincheck){
@@ -130,19 +132,21 @@ class Routes extends React.Component {
       permissionStatus.onchange = function() {  
         console.log('geolocation permission state has changed to ', this.state);
       };
+      that.googleInit();
     });
 
-    var autocomplete = new google.maps.places.Autocomplete((document.getElementById('#meshAddress')),
-      {types: ['geocode']});
-
-    this.googleInit();
     setInterval(function(){
       that.googleInit();
-    },60000);
+    },20000);
     setInterval(function(){
       that.getAllMeshes();
     },5000);
 
+  }
+
+  setAutocomplete (obj){
+    this.setState({autocomplete: obj})
+    console.log('trying to set autocomplete')
   }
 
   googleInit(){
@@ -159,7 +163,17 @@ class Routes extends React.Component {
             userLat: pos.lat,
             userLng: pos.lng
           })
+          var circle = new google.maps.Circle({
+              center: pos,
+              radius: position.coords.accuracy
+            });
+            if (that.state.autocomplete){
+              console.log('setting bounds')
+              that.state.autocomplete.setBounds(circle.getBounds())
+            }
         })
+    } else {
+      console.log('googleInit not working')
     }
   }
 
@@ -187,6 +201,7 @@ class Routes extends React.Component {
             <Form 
               createMesh={this.createMesh}
               currentCoordinate={this.state.currentCoordinate}
+              setAutocomplete={this.setAutocomplete}
             />
           )}/>      
 

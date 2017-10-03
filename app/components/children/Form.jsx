@@ -80,6 +80,14 @@ class Form extends React.Component {
     })
   }
 
+  componentDidMount(){
+    var newAutocomplete = new google.maps.places.Autocomplete((document.getElementById('meshAddress')),
+      {types: ['geocode']});
+      console.log("newAutocomplete is")
+      console.log(newAutocomplete)
+    this.props.setAutocomplete(newAutocomplete);
+  }
+
   render () {
     return (
       <div className="container form">

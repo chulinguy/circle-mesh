@@ -44,6 +44,8 @@ class Mesh extends React.Component {
   
 
   componentDidMount(){ 
+    
+
     this.intervalFunc()
     this.state.intervalFunc = setInterval(this.intervalFunc.bind(this), 15000);
 
