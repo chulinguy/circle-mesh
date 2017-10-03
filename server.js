@@ -26,9 +26,9 @@ app.use(favicon(path.join(__dirname, 'public', 'assets','images','favicon.png'))
 //passport logic
 require('./config/passport.js')(passport);
 
-app.use(cookieParser('S3CR37'))
+app.use(cookieParser('S3CR37C00K13'))
 app.use(cookieSession({
-  secret: 'S3CR37',
+  secret: 'S3CR37C00K13',
   cookie: {
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
@@ -213,33 +213,33 @@ app.post('/api/mesh', (req, res) => {
   var today = new Date;
   console.log(`User ${req.session.passport.user} is trying to create a new mesh`)
   // console.log('REQ.BODY of mesh post', req.body);
-  var convertedLocalDateArr = req.body.meshDate.split("-");
   // console.log("before parsing")
   // console.log(convertedLocalDateArr)
-  convertedLocalDateArr [1] = parseInt(convertedLocalDateArr [1]) - 1 ; 
-  if (req.body.meshTime.slice(-2) === 'AM'){
-    if (req.body.meshTime.indexOf(' ') === 1){
-      var localHour = parseInt(req.body.meshTime.slice(0, 1));
-    } else var localHour = parseInt(req.body.meshTime.slice(0, 2));
-  } else if (req.body.meshTime.slice(-2) === 'PM'){
-    if (req.body.meshTime.indexOf(' ') === 1){
-      var localHour = 12 + parseInt(req.body.meshTime.slice(0, 1));
-    } else var localHour = 12 + parseInt(req.body.meshTime.slice(0, 2));
-  }
+  // var convertedLocalDateArr = req.body.meshDate.split("-");
+  // convertedLocalDateArr [1] = parseInt(convertedLocalDateArr [1]) - 1 ; 
+  // if (req.body.meshTime.slice(-2) === 'AM'){
+  //   if (req.body.meshTime.indexOf(' ') === 1){
+  //     var localHour = parseInt(req.body.meshTime.slice(0, 1));
+  //   } else var localHour = parseInt(req.body.meshTime.slice(0, 2));
+  // } else if (req.body.meshTime.slice(-2) === 'PM'){
+  //   if (req.body.meshTime.indexOf(' ') === 1){
+  //     var localHour = 12 + parseInt(req.body.meshTime.slice(0, 1));
+  //   } else var localHour = 12 + parseInt(req.body.meshTime.slice(0, 2));
+  // }
   // console.log('localHour is', localHour);
-  var duration = parseInt(req.body.meshDuration);
-  var meshStartTimeLocal = new Date(...convertedLocalDateArr, localHour);
-  var meshEndTimeLocal = new Date(...convertedLocalDateArr, localHour + duration);
+  // var duration = parseInt(req.body.meshDuration);
+  // var meshStartTimeLocal = new Date(...convertedLocalDateArr, localHour);
+  // var meshEndTimeLocal = new Date(...convertedLocalDateArr, localHour + duration);
   // console.log('meshStartTimeMilliSec is', meshStartTimeLocal.toString())
   // console.log('meshStartTimeMilliSec is', meshStartTimeLocal.getTime())
   // console.log('meshEndTimeMilliSec is', meshEndTimeLocal.getTime())
   Mesh.create({
     meshName: req.body.meshName,
     meshCreatedAtTime: today.toString(),
-    meshStartTime: meshStartTimeLocal.toString(),
-    meshStartTimeMilliSec: meshStartTimeLocal.getTime(),
-    meshEndTime: meshEndTimeLocal.toString(),
-    meshEndTimeMilliSec: meshEndTimeLocal.getTime(),
+    meshStartTime: req.body.meshStartTime.toString(),
+    meshStartTimeMilliSec: req.body.meshStartTimeMilliSec,
+    meshEndTime: req.body.meshEndTime.toString(),
+    meshEndTimeMilliSec: req.body.meshEndTimeMilliSec,
     meshCoordinate: req.body.meshCoordinate,
     meshCreatedCoordinate: req.body.meshCreatedCoordinate,
     meshTime: req.body.meshTime,

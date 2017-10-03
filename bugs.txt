@@ -1,3 +1,4 @@
 
-1) Auto complete only works locally
+1) Auto complete only works locally DONE
 2) Still not seeing meshes on deployed!? 
+3) Date formatting

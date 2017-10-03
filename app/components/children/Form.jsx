@@ -26,14 +26,14 @@ class Form extends React.Component {
 
   meshDateChangeHandler(event){
     var convertedDate = event.target.value;
-    if (event.target.value.includes("/")){
-      var beforeConvert = event.target.value
-      var month = beforeConvert.slice(0,2);
-      var day = beforeConvert.slice(3,5);
-      var year = beforeConvert.slice(7);
-      convertedDate = `${year}-${month}-${day}`;
-    }
-  
+    // if (event.target.value.includes("/")){
+    //   var beforeConvert = event.target.value
+    //   var month = beforeConvert.slice(0,2);
+    //   var day = beforeConvert.slice(3,5);
+    //   var year = beforeConvert.slice(7);
+    //   convertedDate = `${year}-${month}-${day}`;
+    // }
+    console.log(convertedDate)
     this.setState({meshDate: convertedDate});
   }
 
@@ -52,8 +52,28 @@ class Form extends React.Component {
   submitHandler(event){
     var that = this; 
     event.preventDefault();
+
+    var convertedLocalDateArr = this.state.meshDate.split("-");
+    convertedLocalDateArr [1] = parseInt(convertedLocalDateArr [1]) - 1 ; 
+    if (this.state.meshTime.slice(-2) === 'AM'){
+      if (this.state.meshTime.indexOf(' ') === 1){
+        var localHour = parseInt(this.state.meshTime.slice(0, 1));
+      } else var localHour = parseInt(this.state.meshTime.slice(0, 2));
+    } else if (this.state.meshTime.slice(-2) === 'PM'){
+      if (this.state.meshTime.indexOf(' ') === 1){
+        var localHour = 12 + parseInt(this.state.meshTime.slice(0, 1));
+      } else var localHour = 12 + parseInt(this.state.meshTime.slice(0, 2));
+    }
+    var meshStartTimeLocal = new Date(...convertedLocalDateArr, localHour);
+    var meshEndTimeLocal = new Date(...convertedLocalDateArr, localHour + parseInt(this.state.meshDuration));
+    console.log('meshStartTime is', meshStartTimeLocal.toString());
+    console.log('meshEndTime is', meshEndTimeLocal.toString());
+    var meshStartTimeMilliSec = meshStartTimeLocal.getTime();
+    var meshEndTimeMilliSec = meshEndTimeLocal.getTime();
+    console.log('meshStartTimeMilliSec is', meshStartTimeMilliSec);
+    console.log('meshEndTimeMilliSec is', meshEndTimeMilliSec);
     var geocoder = new google.maps.Geocoder();
-    console.log("trying to geocoder mesh location")
+    // console.log("trying to geocoder mesh location")
     geocoder.geocode({ 'address': this.state.meshAddress}, function(results, status){
       if (status == google.maps.GeocoderStatus.OK){
         console.log(results[0]);
@@ -61,8 +81,10 @@ class Form extends React.Component {
         var lng = results[0].geometry.location.lng();
         var meshObj = {};
         meshObj.meshName = that.state.meshName;
-        meshObj.meshDate = that.state.meshDate;
-        meshObj.meshDuration = that.state.meshDuration;
+        meshObj.meshStartTime = meshStartTimeLocal;
+        meshObj.meshStartTimeMilliSec = meshStartTimeMilliSec;
+        meshObj.meshEndTime = meshEndTimeLocal;
+        meshObj.meshEndTimeMilliSec = meshEndTimeMilliSec;
         meshObj.meshCoordinate = {
           lat:lat,
           lng: lng
@@ -108,7 +130,7 @@ class Form extends React.Component {
             </div>
             <div className="row">  
               <div className="form-group col-sm-6 col-xs-6">
-                <label htmlFor="formGroupInput" className="meshInput">Start Date (mm/dd/yyyy):</label>
+                <label htmlFor="formGroupInput" className="meshInput">Start Date (yyyy-mm-dd):</label>
                 <input className="form-control" type="date" value={this.state.meshDate}  onChange={this.meshDateChangeHandler} id="meshDate"/>
               </div>
               <div className="form-group col-sm-6 col-xs-6">
