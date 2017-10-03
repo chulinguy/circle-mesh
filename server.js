@@ -185,11 +185,17 @@ app.post('/api/joinMesh/:meshID/', (req, res)=>{
       users: req.session.passport.user
     }
   },(err, mesh) => {
-    if (err) throw err;
+    if (err) {
+      console.log(err);
+      res.status(500).send('get meshes broke')
+    }
     // console.log(mesh)
     Mesh.findById(req.params.meshID).populate("users").lean().exec((err2, mesh2) => {
       // console.log(mesh2.users)
-      if (err2) throw err;
+      if (err) {
+        console.log(err);
+        res.status(500).send('joining mesh broke')
+      }
       res.json(mesh2)
     })
 
@@ -199,7 +205,10 @@ app.post('/api/joinMesh/:meshID/', (req, res)=>{
 app.get('/api/meshUsers/:meshID', (req, res)=>{
   console.log(`getting all other users in mesh ${req.params.meshID}`)
   Mesh.find({_id: req.params.meshID}).populate("users").exec( (err,mesh)=>{
-    if (err) throw err;
+    if (err) {
+      console.log(err);
+      res.status(500).send('get other users in mesh broke')
+    }
     // console.log(mesh)
     if(mesh.length === 0){res.end()}
     else {var filteredMeshUsers = mesh[0].users.filter((v)=>(v._id !==req.session.passport.user))
@@ -246,9 +255,14 @@ app.post('/api/mesh', (req, res) => {
     meshCoordinate: req.body.meshCoordinate,
     
   }, (err, data) => {
-    if (err) throw err;
-    console.log('new mesh created');
-    res.end();
+    if (err) {
+      console.log(err);
+      res.status(500).send('create meshes broke')
+    } else {
+
+      console.log('new mesh created');
+      res.end();
+    }
   })
 })
 
@@ -263,7 +277,10 @@ app.get('/api/meshes', (req, res) => {
     meshStartTimeMilliSec:{$lt: rightNowMilliSec},
     meshEndTimeMilliSec:{$gt: rightNowMilliSec}
   }).exec((err, data)=> {
-    if (err) throw err; 
+    if (err) {
+      console.log(err);
+      res.status(500).send('get meshes broke')
+    }
     res.json(data)
   })
 })
