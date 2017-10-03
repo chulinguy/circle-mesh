@@ -1,7 +1,6 @@
 import React from "react";
 // import helpers from "../utils/helpers";
 import {Link} from 'react-router-dom';
-import Geosuggest from 'react-geosuggest'
 
 class Form extends React.Component {
   constructor(props){
