@@ -204,7 +204,7 @@ app.get('/api/meshUsers/:meshID', (req, res)=>{
     if(mesh.length === 0){res.end()}
     else {var filteredMeshUsers = mesh[0].users.filter((v)=>(v._id !==req.session.passport.user))
     res.json(filteredMeshUsers)}
-    console.log(`sending all other users in mesh ${req.params.meshID} to user ${req.session.passport.user}`)
+    // console.log(`sending all other users in mesh ${req.params.meshID} to user ${req.session.passport.user}`)
   })
 })
 

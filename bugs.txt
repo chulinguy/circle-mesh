@@ -1,4 +1,4 @@
 
-1) Auto complete only works locally DONE
+1) Changing error throwing to error logging
 2) Still not seeing meshes on deployed!? 
-3) Date formatting
+3) 
