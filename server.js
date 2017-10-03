@@ -17,7 +17,7 @@ var port = process.env.PORT || 3000;
 
 //server middle-wares
 app.use(express.static("public"));
-app.use(logger("dev"));
+// app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
@@ -187,7 +187,7 @@ app.post('/api/joinMesh/:meshID/', (req, res)=>{
   },(err, mesh) => {
     if (err) {
       console.log(err);
-      res.status(500).send('get meshes broke')
+      res.status(500).send('joining meshes broke')
     }
     // console.log(mesh)
     Mesh.findById(req.params.meshID).populate("users").lean().exec((err2, mesh2) => {
@@ -271,12 +271,17 @@ app.get('/api/meshes', (req, res) => {
   var rightNow = new Date; 
   var rightNowMilliSec = rightNow.getTime();
   if (req.session.passport){
-    console.log(`sending ongoing meshes for user ${req.session.passport.user}`)
   }
   Mesh.find({
     meshStartTimeMilliSec:{$lt: rightNowMilliSec},
     meshEndTimeMilliSec:{$gt: rightNowMilliSec}
   }).exec((err, data)=> {
+    if (req.session.passport){
+      var USER = req.session.passport.user
+    } else {
+      var USER = 'undefined'
+    }
+    console.log(`sending ${data.length} meshes for user ${USER}`)
     if (err) {
       console.log(err);
       res.status(500).send('get meshes broke')
