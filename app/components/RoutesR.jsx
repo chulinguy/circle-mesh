@@ -89,8 +89,8 @@ class Routes extends React.Component {
   getAllMeshes(){
     var that = this;  
     axios.get('/api/meshes').then((meshesObj)=>{
-        console.log('meshesObj.data is');
-        console.log(meshesObj.data);
+        // console.log('meshesObj.data is');
+        // console.log(meshesObj.data);
       if (Object.keys(meshesObj.data).length){
         var filteredMeshes = meshesObj.data.filter((v)=>{
           var R = 6371e3; 
@@ -111,12 +111,30 @@ class Routes extends React.Component {
           var d = R * c;
           return d <32000;
         });
+        console.log("filteredMeshes are")
+        console.log(filteredMeshes)
         that.setState({meshes: filteredMeshes});
       }
     })
   }
   componentDidMount(){
     var that = this; 
+    navigator.permissions.query({name:'geolocation'})
+    .then(function(permissionStatus) {  
+      console.log('geolocation permission state is ', permissionStatus.state);
+      if (permissionStatus.state !== 'granted'){
+        Notification.requestPermission(function(result) {
+          console.log(`New permission result is ${result}`)
+        })
+      }
+      permissionStatus.onchange = function() {  
+        console.log('geolocation permission state has changed to ', this.state);
+      };
+    });
+
+    var autocomplete = new google.maps.places.Autocomplete((document.getElementById('#meshAddress')),
+      {types: ['geocode']});
+
     this.googleInit();
     setInterval(function(){
       that.googleInit();
@@ -125,14 +143,6 @@ class Routes extends React.Component {
       that.getAllMeshes();
     },5000);
 
-  }
-
-  componentDidUpdate(prevProps, prevState){
-    if (prevState.meshes.length !== this.state.meshes.length || this.state.meshes.length ===0 ){
-      console.log('Meshes in state: ',this.state.meshes)
-      this.getAllMeshes();
-    }
-    
   }
 
   googleInit(){

@@ -1,6 +1,8 @@
 import React from "react";
 // import helpers from "../utils/helpers";
 import {Link} from 'react-router-dom';
+import Moment from 'react-moment';
+import 'moment-timezone';
 
 class Form extends React.Component {
   constructor(props){
@@ -25,7 +27,16 @@ class Form extends React.Component {
   }
 
   meshDateChangeHandler(event){
-    this.setState({meshDate: event.target.value});
+    var convertedDate = event.target.value;
+    if (event.target.value.includes("/")){
+      var beforeConvert = event.target.value
+      var month = beforeConvert.slice(0,2);
+      var day = beforeConvert.slice(3,5);
+      var year = beforeConvert.slice(7);
+      convertedDate = `${year}-${month}-${day}`;
+    }
+  
+    this.setState({meshDate: convertedDate});
   }
 
   meshTimeChangeHandler(event){
@@ -86,7 +97,7 @@ class Form extends React.Component {
             </div>
             <div className="row">  
               <div className="form-group col-sm-6 col-xs-6">
-                <label htmlFor="formGroupInput" className="meshInput">Start Date:</label>
+                <label htmlFor="formGroupInput" className="meshInput">Start Date (mm/dd/yyyy):</label>
                 <input className="form-control" type="date" value={this.state.meshDate}  onChange={this.meshDateChangeHandler} id="meshDate"/>
               </div>
               <div className="form-group col-sm-6 col-xs-6">

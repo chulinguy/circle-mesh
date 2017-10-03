@@ -93,7 +93,7 @@ class Mesh extends React.Component {
                           <img src={v.photo} className='avatar-pic'/>
                         </div>
                         <div className="col-xs-2">
-                          <a href={this.props.linkedinURL} target="_blank">
+                          <a href={v.linkedinURL} target="_blank">
                             <img src="/assets/images/Linkedin.png" className='linkedin-pic img img-responsive'/>
                           </a> 
                         </div>

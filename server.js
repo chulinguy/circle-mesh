@@ -214,6 +214,8 @@ app.post('/api/mesh', (req, res) => {
   console.log(`User ${req.session.passport.user} is trying to create a new mesh`)
   // console.log('REQ.BODY of mesh post', req.body);
   var convertedLocalDateArr = req.body.meshDate.split("-");
+  // console.log("before parsing")
+  // console.log(convertedLocalDateArr)
   convertedLocalDateArr [1] = parseInt(convertedLocalDateArr [1]) - 1 ; 
   if (req.body.meshTime.slice(-2) === 'AM'){
     if (req.body.meshTime.indexOf(' ') === 1){
