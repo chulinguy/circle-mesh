@@ -41,7 +41,7 @@ var passport = function(passport) {
       process.nextTick(function(){
         // console.log('trying to find user')
         // console.log(`profile displayname is ${profile.displayName}`)
-        User.findOne({'username': profile.displayName}, function(err, user){
+        User.findOne({'fullName': profile.displayName}, function(err, user){
           if(user){
             console.log('user already in database!')
             // console.log(user);
