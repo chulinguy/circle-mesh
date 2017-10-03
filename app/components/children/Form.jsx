@@ -66,12 +66,12 @@ class Form extends React.Component {
     }
     var meshStartTimeLocal = new Date(...convertedLocalDateArr, localHour);
     var meshEndTimeLocal = new Date(...convertedLocalDateArr, localHour + parseInt(this.state.meshDuration));
-    console.log('meshStartTime is', meshStartTimeLocal.toString());
-    console.log('meshEndTime is', meshEndTimeLocal.toString());
+    // console.log('meshStartTime is', meshStartTimeLocal.toString());
+    // console.log('meshEndTime is', meshEndTimeLocal.toString());
     var meshStartTimeMilliSec = meshStartTimeLocal.getTime();
     var meshEndTimeMilliSec = meshEndTimeLocal.getTime();
-    console.log('meshStartTimeMilliSec is', meshStartTimeMilliSec);
-    console.log('meshEndTimeMilliSec is', meshEndTimeMilliSec);
+    // console.log('meshStartTimeMilliSec is', meshStartTimeMilliSec);
+    // console.log('meshEndTimeMilliSec is', meshEndTimeMilliSec);
     var geocoder = new google.maps.Geocoder();
     // console.log("trying to geocoder mesh location")
     geocoder.geocode({ 'address': this.state.meshAddress}, function(results, status){

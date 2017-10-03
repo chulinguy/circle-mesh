@@ -111,9 +111,9 @@ class Routes extends React.Component {
           var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
           var d = R * c;
-          return d <32000;
+          return d <1609;
         });
-        console.log("filteredMeshes are",filteredMeshes)
+        // console.log("filteredMeshes are",filteredMeshes)
         that.setState({meshes: filteredMeshes});
       }
     })
@@ -136,10 +136,11 @@ class Routes extends React.Component {
 
     setInterval(function(){
       that.googleInit();
+      console.log(that.state.meshes);
     },60000);
     setInterval(function(){
       that.getAllMeshes();
-    },5000);
+    },6000);
 
   }
 
