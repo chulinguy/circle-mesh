@@ -50,8 +50,7 @@ var passport = function(passport) {
             // user.save()
 
             return done(null, user);
-          }
-          else {
+          } else {
             console.log('creating a new user in database!');
             // console.log('profile is')
             // console.log(profile)
